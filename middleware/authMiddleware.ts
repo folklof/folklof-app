@@ -1,76 +1,37 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import StandardError from "../utils/constants/standardError";
-import { JWT_SIGN } from "./config/jwtConfig";
 
-interface JwtInterface extends JwtPayload {
-  role: string;
-}
-
-const userAuthentication = (
+function isAuthenticatedGoogle(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    throw new StandardError({
-      success: false,
-      status: 401,
-      message: "Unauthorized",
-    });
-  } else {
-    const token = authHeader.split(" ")[1];
-    try {
-      if (!JWT_SIGN) {
-        throw new Error("JWT_SIGN is not defined");
-      }
-      const decodedToken = jwt.verify(token, JWT_SIGN) as JwtPayload;
-      req.user = decodedToken;
-      next();
-    } catch (error) {
-      next(error);
-    }
+) {
+  if (req.isAuthenticated()) {
+    return next();
   }
-};
+  res.redirect("/api/v1/auth/failure");
+}
 
-const authorizationMiddleware =
-  (allowedRoles: string | string[]) =>
-  (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
+// const authorizationMiddleware =
+//   (allowedRoles: number[]) =>
+//   (req: Request, res: Response, next: NextFunction) => {
+//     const user = req.user as any;
 
-    if (!authHeader) {
-      throw new StandardError({
-        success: false,
-        status: 401,
-        message: "Unauthorized",
-      });
-    } else {
-      try {
-        const token = authHeader.split(" ")[1];
-        if (!JWT_SIGN) {
-          throw new Error("JWT_SIGN is not defined");
-        }
-        const decodedToken = jwt.verify(token, JWT_SIGN) as JwtInterface;
-        req.user = decodedToken;
-        if (allowedRoles.includes(decodedToken.role)) {
-          next();
-        } else {
-          throw new StandardError({
-            success: false,
-            status: 403,
-            message:
-              "Access Denied. You are not allowed to access this resource.",
-          });
-        }
-      } catch (error) {
-        next(error);
-      }
-    }
-  };
+//     if (!user || !user.role_id) {
+//       res.status(401).json({ success: false, message: "Unauthorized" });
+//     } else {
+//       if (allowedRoles.includes(user.role_id)) {
+//         next();
+//       } else {
+//         res.status(403).json({
+//           success: false,
+//           message:
+//             "Access Denied. You are not allowed to access this resource.",
+//         });
+//       }
+//     }
+//   };
 
-const adminAuthorization = authorizationMiddleware(["admin", "manager"]);
-const managerAuthorization = authorizationMiddleware(["manager"]);
+// const adminAuthorization = authorizationMiddleware([2, 3]);
+// const managerAuthorization = authorizationMiddleware([3]);
 
-export { userAuthentication, adminAuthorization, managerAuthorization };
+export { isAuthenticatedGoogle };
