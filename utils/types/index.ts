@@ -60,6 +60,7 @@ export interface ICategoryDao {
   getAllCategories(): Promise<ICategoryAttributes[] | undefined>;
   getCategoryById(id: number): Promise<ICategoryAttributes[] | undefined>;
   getCategoryByName(name: string): Promise<ICategoryAttributes[] | undefined>;
+  getOneCategoryByName(name: string): Promise<ICategoryAttributes | any>;
   createCategory(
     name: string,
     desc: string
