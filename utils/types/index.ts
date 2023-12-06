@@ -21,17 +21,6 @@ export interface IUserAttributes {
   created_date?: Date;
 }
 
-export interface IUserGoogle {
-  _json: {
-    sub: string;
-    name: string;
-    picture: string;
-    email: string;
-    email_verified: boolean;
-    locale: string;
-  };
-}
-
 export interface IResultAttributes {
   status: number;
   success: boolean;
@@ -59,4 +48,32 @@ export interface IUserService {
   ): Promise<any>;
   getUserProfile(email: string): Promise<any>;
   getUserById(id: number): Promise<any>;
+}
+
+export interface ICategoryAttributes {
+  id?: number | null;
+  name?: string | null;
+  created_date?: Date | null;
+}
+
+export interface ICategoryDao {
+  getAllCategories(): Promise<ICategoryAttributes[] | undefined>;
+  getCategoryById(id: number): Promise<ICategoryAttributes[] | undefined>;
+  getCategoryByName(name: string): Promise<ICategoryAttributes[] | undefined>;
+  createCategory(
+    name: string,
+    desc: string
+  ): Promise<ICategoryAttributes[] | undefined>;
+  updateCategory(
+    id: number,
+    name: string,
+    desc: string
+  ): Promise<ICategoryAttributes[] | undefined>;
+  deleteCategory(id: number): Promise<void>;
+}
+
+export interface ICategoryService {
+  getAllCategories(): Promise<any>;
+  getCategoryById(id: number): Promise<any>;
+  getCategoryByName(name: string): Promise<any>;
 }
