@@ -1,0 +1,107 @@
+// Updated Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+model Book {
+  ID              String               @id
+  category_id     Int?
+  review_id       Int?
+  title           String?
+  description     String?
+  audio_link      String?
+  cover_image     String?
+  created_date    DateTime?
+  category        Category?            @relation(fields: [category_id], references: [ID])
+  interactions    UserbookInteraction[]
+  reviews         Review[]             @relation("BookToReview")
+  quizzes         BookQuiz[]
+  favourites       Favourite[]
+}
+
+model BookQuiz {
+  ID             Int      @id @default(autoincrement())
+  book_id        String?
+  questions      String?
+  options        String?
+  correct_answer String?
+  created_date   DateTime?
+  book           Book?    @relation(fields: [book_id], references: [ID])
+  attempts       UserquizAttempt[]
+}
+
+model Category {
+  ID          Int      @id @default(autoincrement())
+  name        String?
+  description String?
+  books       Book[]
+}
+
+model Review {
+  ID          Int      @id
+  user_id     Int?
+  title       String?
+  description String?
+  rating      Int?
+  created_date DateTime?
+  user        User?    @relation(fields: [user_id], references: [ID])
+  book        Book[]   @relation("BookToReview")
+}
+
+model Role {
+  ID    Int      @id @default(autoincrement())
+  name  String?
+  users User[]
+}
+
+model User {
+  ID           Int      @id @default(autoincrement())
+  role_id      Int?
+  username     String?
+  email        String?
+  phone        String?
+  age          Int?
+  avatar       String?
+  created_date DateTime?
+  role         Role?    @relation(fields: [role_id], references: [ID])
+  reviews      Review[]
+  interactions UserbookInteraction[]
+  attempts     UserquizAttempt[]
+  favourites    Favourite[]
+}
+
+model UserbookInteraction {
+  ID          Int      @id @default(autoincrement())
+  user_id     Int?
+  book_id     String?
+  is_read     String?
+  created_date DateTime?
+  user        User?    @relation(fields: [user_id], references: [ID])
+  book        Book?    @relation(fields: [book_id], references: [ID])
+}
+
+model UserquizAttempt {
+  ID           Int      @id @default(autoincrement())
+  bookquiz_id  Int?
+  user_id      Int?
+  scores       Int?
+  created_date DateTime?
+  bookquiz     BookQuiz?    @relation(fields: [bookquiz_id], references: [ID])
+  user         User?        @relation(fields: [user_id], references: [ID])
+}
+
+model Favourite {
+  ID          Int      @id @default(autoincrement())
+  user_id     Int?
+  book_id     String?
+  is_added    String?
+  created_date DateTime?
+  user        User?    @relation(fields: [user_id], references: [ID])
+  book        Book?    @relation(fields: [book_id], references: [ID])
+}
