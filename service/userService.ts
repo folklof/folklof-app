@@ -30,7 +30,7 @@ class UserService implements IUserService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -56,7 +56,7 @@ class UserService implements IUserService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -83,7 +83,7 @@ class UserService implements IUserService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }

@@ -72,6 +72,26 @@ class CategoryDao implements ICategoryDao {
     }
   }
 
+  async getOneCategoryByName(
+    name: string
+  ): Promise<ICategoryAttributes[] | undefined> {
+    try {
+      const category = await this.db.category.findFirst({
+        where: {
+          name: name,
+        },
+      });
+      return category ? [category] : [];
+    } catch (error: any) {
+      console.log(error, "Error retrieving category by name");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving category by name",
+        status: 500,
+      });
+    }
+  }
+
   async getCategoryByName(
     name: string
   ): Promise<ICategoryAttributes[] | undefined> {

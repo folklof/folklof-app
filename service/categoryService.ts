@@ -10,9 +10,13 @@ class CategoryService implements ICategoryService {
 
   async createCategory(name: string, desc: string) {
     try {
-      const isCategoryExist = await this.categoryDao.getCategoryByName(name);
+      const isCategoryExist = await this.categoryDao.getOneCategoryByName(
+        name
+      );
 
-      if (isCategoryExist) {
+      console.log(isCategoryExist);
+
+      if (isCategoryExist && isCategoryExist.length > 0) {
         throw new StandardError({
           success: false,
           message: "Category already exist",
@@ -31,7 +35,7 @@ class CategoryService implements ICategoryService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -59,7 +63,7 @@ class CategoryService implements ICategoryService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -85,7 +89,7 @@ class CategoryService implements ICategoryService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -111,7 +115,7 @@ class CategoryService implements ICategoryService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -137,7 +141,7 @@ class CategoryService implements ICategoryService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -165,7 +169,7 @@ class CategoryService implements ICategoryService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
