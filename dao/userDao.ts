@@ -16,9 +16,10 @@ class UserDao implements IUserDao {
       });
       return user as any;
     } catch (error: any) {
+      console.log(error, "Error retrieving user by email");
       throw new StandardError({
         success: false,
-        message: error.message,
+        message: "Error retrieving user by email",
         status: 500,
       });
     }
@@ -50,6 +51,7 @@ class UserDao implements IUserDao {
   ): Promise<IUserAttributes | any> {
     const default_role_id: number = 1;
     const created_date: Date = new Date();
+    const default_null = null;
 
     try {
       const result = await this.prisma.user.create({
@@ -57,15 +59,18 @@ class UserDao implements IUserDao {
           email,
           username: name,
           avatar: picture,
+          age: default_null,
+          phone: default_null,
           role_id: default_role_id,
           created_date,
         },
       });
       return result;
     } catch (error: any) {
+      console.log(error, "Error creating user");
       throw new StandardError({
         success: false,
-        message: error.message,
+        message: "Error creating user",
         status: 500,
       });
     }

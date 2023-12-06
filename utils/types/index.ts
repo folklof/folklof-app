@@ -1,5 +1,5 @@
 export interface IUser {
-  id?: number;
+  id?: string;
   _json?: any;
   role_id?: { id: number; name: string };
   username?: string;
@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 export interface IUserAttributes {
-  id?: number;
+  id?: string;
   role_id?: number;
   username?: string;
   email?: string;
@@ -47,18 +47,18 @@ export interface IUserService {
     picture: string
   ): Promise<any>;
   getUserProfile(email: string): Promise<any>;
-  getUserById(id: number): Promise<any>;
+  getUserById(id: string): Promise<any>;
 }
 
 export interface ICategoryAttributes {
-  id?: number | null;
+  id?: string | null;
   name?: string | null;
   created_date?: Date | null;
 }
 
 export interface ICategoryDao {
   getAllCategories(): Promise<ICategoryAttributes[] | undefined>;
-  getCategoryById(id: number): Promise<ICategoryAttributes[] | undefined>;
+  getCategoryById(id: string): Promise<ICategoryAttributes[] | undefined>;
   getCategoryByName(name: string): Promise<ICategoryAttributes[] | undefined>;
   getOneCategoryByName(name: string): Promise<ICategoryAttributes | any>;
   createCategory(
@@ -66,15 +66,15 @@ export interface ICategoryDao {
     desc: string
   ): Promise<ICategoryAttributes[] | undefined>;
   updateCategory(
-    id: number,
+    id: string,
     name: string,
     desc: string
   ): Promise<ICategoryAttributes[] | undefined>;
-  deleteCategory(id: number): Promise<void>;
+  deleteCategory(id: string): Promise<void>;
 }
 
 export interface ICategoryService {
   getAllCategories(): Promise<any>;
-  getCategoryById(id: number): Promise<any>;
+  getCategoryById(id: string): Promise<any>;
   getCategoryByName(name: string): Promise<any>;
 }
