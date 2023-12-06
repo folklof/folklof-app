@@ -9,7 +9,6 @@ const errorHandlerMiddleware = (
   res.status(err.status || 500).json({
     success: false,
     message: err.message,
-    errors: err.errors,
   });
 };
 

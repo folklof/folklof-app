@@ -1,5 +1,6 @@
 import { Request, NextFunction, Response } from "express";
-import db from "../db";
+import StandardError from "../utils/constants/standardError";
+import { PrismaClient } from "@prisma/client";
 
 const databaseMiddleware = async (
   req: Request,
@@ -7,14 +8,16 @@ const databaseMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    const connection = await db.getConnection();
-    req.db = connection;
+    const prisma = new PrismaClient();
+    await prisma.$connect();
+    req.db = prisma;
     next();
   } catch (error) {
     console.error("Database connection error:", error);
-    res.status(500).json({
+    throw new StandardError({
       success: false,
       message: "Database connection error",
+      status: 500,
     });
   }
 };
