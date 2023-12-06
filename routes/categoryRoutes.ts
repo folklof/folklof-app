@@ -2,6 +2,9 @@ import {
   getAllCategories,
   getCategoryById,
   getCategoryByName,
+  createCategory,
+  updateCategory,
+  deleteCategory,
 } from "../controller/categoryController";
 import { Router, Request, Response, NextFunction } from "express";
 
@@ -16,5 +19,8 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 router.get("/:id", getCategoryById);
+router.post("/", createCategory);
+router.put("/:id", updateCategory);
+router.delete("/:id", deleteCategory);
 
 export default router;
