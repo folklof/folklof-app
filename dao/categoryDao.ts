@@ -17,7 +17,7 @@ class CategoryDao implements ICategoryDao {
       const result = await this.db.category.create({
         data: {
           name,
-          description: desc,
+          desc,
         },
       });
 
@@ -51,13 +51,12 @@ class CategoryDao implements ICategoryDao {
   }
 
   async getCategoryById(
-    id: number
+    id: string
   ): Promise<ICategoryAttributes[] | undefined> {
     try {
-      const categoryId = parseInt(String(id), 10);
       const category = await this.db.category.findUnique({
         where: {
-          ID: categoryId,
+          ID: id,
         },
       });
 
@@ -116,19 +115,18 @@ class CategoryDao implements ICategoryDao {
   }
 
   async updateCategory(
-    id: number,
+    id: string,
     name: string,
     desc: string
   ): Promise<ICategoryAttributes | any> {
     try {
-      const categoryId = parseInt(String(id), 10);
       const result = await this.db.category.update({
         where: {
-          ID: categoryId,
+          ID: id,
         },
         data: {
           name,
-          description: desc,
+          desc,
         },
       });
 
@@ -143,12 +141,11 @@ class CategoryDao implements ICategoryDao {
     }
   }
 
-  async deleteCategory(id: number): Promise<ICategoryAttributes | any> {
+  async deleteCategory(id: string): Promise<ICategoryAttributes | any> {
     try {
-      const categoryId = parseInt(String(id), 10);
       const result = await this.db.category.delete({
         where: {
-          ID: categoryId,
+          ID: id,
         },
       });
 
