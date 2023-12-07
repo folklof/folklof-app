@@ -40,7 +40,7 @@ class CategoryService implements ICategoryService {
     }
   }
 
-  async updateCategory(id: number, name: string, desc: string) {
+  async updateCategory(id: string, name: string, desc: string) {
     try {
       const isCategoryExist = await this.categoryDao.getCategoryById(id);
 
@@ -94,7 +94,7 @@ class CategoryService implements ICategoryService {
     }
   }
 
-  async getCategoryById(id: number) {
+  async getCategoryById(id: string) {
     try {
       const category = await this.categoryDao.getCategoryById(id);
 
@@ -146,7 +146,7 @@ class CategoryService implements ICategoryService {
     }
   }
 
-  async deleteCategory(id: number) {
+  async deleteCategory(id: string) {
     try {
       const isCategoryExist = await this.categoryDao.getCategoryById(id);
 

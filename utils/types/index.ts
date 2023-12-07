@@ -37,7 +37,7 @@ export interface IUserDao {
     role_id: number,
     createdDate: Date
   ): Promise<void>;
-  getUserById(id: number): Promise<IUserAttributes | undefined>;
+  getUserById(id: string): Promise<IUserAttributes | undefined>;
 }
 
 export interface IUserService {

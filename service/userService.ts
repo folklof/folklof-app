@@ -61,7 +61,7 @@ class UserService implements IUserService {
     }
   }
 
-  async getUserById(id: number) {
+  async getUserById(id: string) {
     try {
       const user = await this.userDao.getUserById(id);
       console.log(user, "isi user");

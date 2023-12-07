@@ -25,12 +25,11 @@ class UserDao implements IUserDao {
     }
   }
 
-  async getUserById(id: number): Promise<IUserAttributes | any> {
+  async getUserById(id: string): Promise<IUserAttributes | any> {
     try {
-      const userId = parseInt(String(id), 10);
       const user = await this.prisma.user.findUnique({
         where: {
-          ID: userId,
+          ID: id,
         },
       });
 
