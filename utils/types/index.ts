@@ -29,7 +29,7 @@ export interface IResultAttributes {
 }
 
 export interface IUserDao {
-  getUserByEmail(email: string): Promise<IUserAttributes | undefined>;
+  getUserByEmail(email: string): Promise<IUserAttributes | any>;
   createUser(
     email: string,
     name: string,
@@ -37,7 +37,8 @@ export interface IUserDao {
     role_id: number,
     createdDate: Date
   ): Promise<void>;
-  getUserById(id: string): Promise<IUserAttributes | undefined>;
+  getUserById(id: string): Promise<IUserAttributes | any>;
+  getAllUsers(): Promise<IUserAttributes[] | any>;
 }
 
 export interface IUserService {

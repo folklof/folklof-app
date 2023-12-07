@@ -87,6 +87,32 @@ class UserService implements IUserService {
       });
     }
   }
+
+  async getAllUsers() {
+    try {
+      const users = await this.userDao.getAllUsers();
+
+      if (!users || users.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "User not found",
+          status: 404,
+        });
+      }
+
+      return {
+        success: true,
+        message: users,
+        status: 200,
+      };
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
 }
 
 export default UserService;

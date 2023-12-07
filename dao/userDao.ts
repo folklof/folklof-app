@@ -25,6 +25,24 @@ class UserDao implements IUserDao {
     }
   }
 
+  async getAllUsers(): Promise<IUserAttributes[] | any> {
+    try {
+      const users = await this.prisma.user.findMany({
+        orderBy: {
+          username: "asc",
+        },
+      });
+      return users;
+    } catch (error: any) {
+      console.log(error, "Error retrieving all users");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving all users",
+        status: 500,
+      });
+    }
+  }
+
   async getUserById(id: string): Promise<IUserAttributes | any> {
     try {
       const user = await this.prisma.user.findUnique({
