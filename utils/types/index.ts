@@ -79,3 +79,64 @@ export interface ICategoryService {
   getCategoryById(id: string): Promise<any>;
   getCategoryByName(name: string): Promise<any>;
 }
+
+export interface IBookAttributes {
+  id?: string | null;
+  category_id?: string | null;
+  book_code?: string | null;
+  title?: string | null;
+  desc?: string | null;
+  audio_link?: string | null;
+  image_cover?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IBookDao {
+  createBook(
+    title: string,
+    category_id: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<IBookAttributes | any>;
+  getAllBooks(): Promise<IBookAttributes[] | undefined>;
+  getBookById(id: string): Promise<IBookAttributes[] | undefined>;
+  getBookByCode(book_code: string): Promise<IBookAttributes[] | undefined>;
+  getBookByTitle(title: string): Promise<IBookAttributes[] | undefined>;
+  getBookByCategoryId(
+    category_id: string
+  ): Promise<IBookAttributes[] | undefined>;
+  updateBook(
+    id: string,
+    title: string,
+    category_id: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<IBookAttributes[] | undefined>;
+  deleteBook(id: string): Promise<IBookAttributes[] | undefined>;
+}
+
+export interface IBookService {
+  createBook(
+    category_id: string,
+    title: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<any>;
+  getAllBooks(): Promise<any>;
+  getBookById(id: string): Promise<any>;
+  getBookByCode(book_code: string): Promise<any>;
+  getBookByTitle(title: string): Promise<any>;
+  getBookByCategoryId(category_id: string): Promise<any>;
+  updateBook(
+    id: string,
+    title: string,
+    category_id: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<any>;
+  deleteBook(id: string): Promise<any>;
+}
