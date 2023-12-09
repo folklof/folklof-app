@@ -3,9 +3,8 @@ import { Application, Request } from "express";
 import StandardError from "../utils/constants/standardError";
 
 const origin = [
-  "https://week15-api-avicena-dev.cyclic.cloud",
-  "https://week15.avicena.dev",
-  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:5001"
 ];
 
 const corsOptionsDelegate = (
@@ -14,7 +13,12 @@ const corsOptionsDelegate = (
 ) => {
   const clientOrigin = origin.includes(req.header("Origin"));
 
-  if (clientOrigin) {
+  if (req.method === "OPTIONS") {
+    callback(null, {
+      origin: clientOrigin,
+      methods: "GET,POST,DELETE,PUT,OPTIONS,HEAD",
+    });
+  } else if (clientOrigin) {
     callback(null, {
       origin: true,
       methods: "GET,POST,DELETE,PUT,OPTIONS,HEAD",
@@ -31,7 +35,7 @@ const corsOptionsDelegate = (
 };
 
 const corsMiddleware = (app: Application) => {
-  app.use(cors());
+  app.use(cors({ credentials: true, origin: origin }));
 };
 
 export default corsMiddleware;

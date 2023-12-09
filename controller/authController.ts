@@ -17,27 +17,11 @@ async function handleGoogleLogin(
 
     const result = await userService.checkAndCreateUser(email, name, picture);
     if (result.success) {
-      return res.status(200).json({
-        success: result.success,
-        message: result.message,
-      });
+      res.redirect("http://localhost:3000/dashboard");
     }
   } catch (err: any) {
     next(err);
   }
-}
-
-function isAuthenticatedGoogle(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  if (req.isAuthenticated()) {
-    console.log("Authenticated");
-    req.user;
-    return next();
-  }
-  res.redirect("/api/v1/auth/failure");
 }
 
 function userProfile(req: Request, res: Response) {
@@ -75,14 +59,8 @@ async function handleLogout(
   });
 }
 
-function handleLoginFailed(req: Request, res: Response) {
-  res.status(401).json({ success: false, message: "Unauthorized" });
-}
-
 export {
   handleGoogleLogin,
-  isAuthenticatedGoogle,
   userProfile,
-  handleLogout,
-  handleLoginFailed,
+  handleLogout
 };
