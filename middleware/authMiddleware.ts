@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import StandardError from "../utils/constants/standardError";
 
 function isAuthenticatedGoogle(
   req: Request,
@@ -8,30 +9,37 @@ function isAuthenticatedGoogle(
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/api/v1/auth/failure");
+  throw new StandardError({
+    success: false,
+    message: "User is not authenticated. Please try to log in again.",
+    status: 401,
+  });
 }
 
-// const authorizationMiddleware =
-//   (allowedRoles: number[]) =>
-//   (req: Request, res: Response, next: NextFunction) => {
-//     const user = req.user as any;
+const authorizationMiddleware =
+  (allowedRoles: number[]) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as any;
 
-//     if (!user || !user.role_id) {
-//       res.status(401).json({ success: false, message: "Unauthorized" });
-//     } else {
-//       if (allowedRoles.includes(user.role_id)) {
-//         next();
-//       } else {
-//         res.status(403).json({
-//           success: false,
-//           message:
-//             "Access Denied. You are not allowed to access this resource.",
-//         });
-//       }
-//     }
-//   };
+    if (!req.isAuthenticated()) {
+      throw new StandardError({
+        success: false,
+        message: "User is not authenticated. Please try to log in again.",
+        status: 401,
+      });
+    }
 
-// const adminAuthorization = authorizationMiddleware([2, 3]);
-// const managerAuthorization = authorizationMiddleware([3]);
+    if (allowedRoles.includes(user.role_id)) {
+      return next();
+    }
 
-export { isAuthenticatedGoogle };
+    return res.status(403).json({
+      success: false,
+      message: "Access Denied. You are not allowed to access this resource.",
+    });
+  };
+
+const supervisorAuthorization = authorizationMiddleware([2, 3]);
+const adminAuthorization = authorizationMiddleware([3]);
+
+export { isAuthenticatedGoogle, adminAuthorization, supervisorAuthorization };

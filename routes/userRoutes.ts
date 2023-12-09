@@ -1,6 +1,10 @@
 import express from "express";
-import { getUserById, getUserProfile, getAllUsers } from "../controller/userController";
-import { isAuthenticatedGoogle } from "../controller/authController";
+import {
+  getUserById,
+  getUserProfile,
+  getAllUsers,
+} from "../controller/userController";
+import { isAuthenticatedGoogle } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
