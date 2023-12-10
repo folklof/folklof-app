@@ -63,13 +63,16 @@ model Library {
 model Book {
   ID           String    @id @default(uuid())
   category_id  String?
+  agegroup_id  String?
   book_code    String?
   title        String?
   desc         String?
+  duration     String?
   audio_link   String?
   cover_image  String?
   created_date DateTime?  @default(now())
   category     Category?  @relation(fields: [category_id], references: [ID])
+  agegroup     AgeGroup?  @relation(fields: [agegroup_id], references: [ID])
   
   // Relations
   favourites   Favourite[]
@@ -86,6 +89,16 @@ model Category {
 
   // Relations
   books        Book[]
+}
+
+// Age Group model
+model AgeGroup {
+  ID           String   @id @default(uuid())
+  name         String?
+  desc         String?
+
+  // Relations
+  books       Book[]
 }
 
 // BookQuiz model
