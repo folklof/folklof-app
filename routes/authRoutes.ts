@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
 import { handleGoogleLogin, handleLogout } from "../controller/authController";
+import { HOST_URL_FRONTEND } from "../utils/constants/urlApi";
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get(
 router.get(
   "/login/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000/auth/failure", // Front end URL Login Google Failed
+    failureRedirect: `${HOST_URL_FRONTEND}/auth/failure`, // Front end URL Login Google Failed
   }),
   handleGoogleLogin
 );

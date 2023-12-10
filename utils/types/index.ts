@@ -140,3 +140,17 @@ export interface IBookService {
   ): Promise<any>;
   deleteBook(id: string): Promise<any>;
 }
+
+export interface IRoleAttributes {
+  id?: number;
+  name?: string;
+}
+
+export interface IRoleDao {
+  getAllRoles(): Promise<IRoleAttributes[] | any>;
+  getRoleById(id: number): Promise<IRoleAttributes[] | any>;  
+}
+
+export interface IRoleService {
+  getAllRoles(): Promise<any>;
+}

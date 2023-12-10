@@ -1,6 +1,7 @@
 import UserService from "../service/userService";
 import UserDao from "../dao/userDao";
 import { Request, Response, NextFunction } from "express";
+import { HOST_URL_FRONTEND } from "../utils/constants/urlApi";
 
 async function handleGoogleLogin(
   req: Request,
@@ -17,7 +18,7 @@ async function handleGoogleLogin(
 
     const result = await userService.checkAndCreateUser(email, name, picture);
     if (result.success) {
-      res.redirect("http://localhost:3000/dashboard");
+      res.redirect(`${HOST_URL_FRONTEND}/dashboard`);
     }
   } catch (err: any) {
     next(err);
@@ -40,9 +41,8 @@ async function handleLogout(
   next: NextFunction
 ): Promise<void> {
   if (!req.user) {
-    res.json({
-      status: 401,
-      logged: false,
+    res.status(401).json({
+      success: false,
       message: "You are not authorized to the app. Can't logout",
     });
     return;
@@ -59,8 +59,4 @@ async function handleLogout(
   });
 }
 
-export {
-  handleGoogleLogin,
-  userProfile,
-  handleLogout
-};
+export { handleGoogleLogin, userProfile, handleLogout };
