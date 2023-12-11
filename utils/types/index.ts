@@ -1,5 +1,5 @@
 export interface IUser {
-  id?: number;
+  id?: string;
   _json?: any;
   role_id?: { id: number; name: string };
   username?: string;
@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 export interface IUserAttributes {
-  id?: number;
+  id?: string;
   role_id?: number;
   username?: string;
   email?: string;
@@ -19,17 +19,6 @@ export interface IUserAttributes {
   age?: number;
   avatar?: string;
   created_date?: Date;
-}
-
-export interface IUserGoogle {
-  _json: {
-    sub: string;
-    name: string;
-    picture: string;
-    email: string;
-    email_verified: boolean;
-    locale: string;
-  };
 }
 
 export interface IResultAttributes {
@@ -40,7 +29,7 @@ export interface IResultAttributes {
 }
 
 export interface IUserDao {
-  getUserByEmail(email: string): Promise<IUserAttributes | undefined>;
+  getUserByEmail(email: string): Promise<IUserAttributes | any>;
   createUser(
     email: string,
     name: string,
@@ -48,7 +37,8 @@ export interface IUserDao {
     role_id: number,
     createdDate: Date
   ): Promise<void>;
-  getUserById(id: number): Promise<IUserAttributes | undefined>;
+  getUserById(id: string): Promise<IUserAttributes | any>;
+  getAllUsers(): Promise<IUserAttributes[] | any>;
 }
 
 export interface IUserService {
@@ -58,5 +48,109 @@ export interface IUserService {
     picture: string
   ): Promise<any>;
   getUserProfile(email: string): Promise<any>;
-  getUserById(id: number): Promise<any>;
+  getUserById(id: string): Promise<any>;
+}
+
+export interface ICategoryAttributes {
+  id?: string | null;
+  name?: string | null;
+  created_date?: Date | null;
+}
+
+export interface ICategoryDao {
+  getAllCategories(): Promise<ICategoryAttributes[] | undefined>;
+  getCategoryById(id: string): Promise<ICategoryAttributes[] | undefined>;
+  getCategoryByName(name: string): Promise<ICategoryAttributes[] | undefined>;
+  getOneCategoryByName(name: string): Promise<ICategoryAttributes | any>;
+  createCategory(
+    name: string,
+    desc: string
+  ): Promise<ICategoryAttributes[] | undefined>;
+  updateCategory(
+    id: string,
+    name: string,
+    desc: string
+  ): Promise<ICategoryAttributes[] | undefined>;
+  deleteCategory(id: string): Promise<void>;
+}
+
+export interface ICategoryService {
+  getAllCategories(): Promise<any>;
+  getCategoryById(id: string): Promise<any>;
+  getCategoryByName(name: string): Promise<any>;
+}
+
+export interface IBookAttributes {
+  id?: string | null;
+  category_id?: string | null;
+  book_code?: string | null;
+  title?: string | null;
+  desc?: string | null;
+  audio_link?: string | null;
+  image_cover?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IBookDao {
+  createBook(
+    title: string,
+    category_id: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<IBookAttributes | any>;
+  getAllBooks(): Promise<IBookAttributes[] | undefined>;
+  getBookById(id: string): Promise<IBookAttributes[] | undefined>;
+  getBookByCode(book_code: string): Promise<IBookAttributes[] | undefined>;
+  getBookByTitle(title: string): Promise<IBookAttributes[] | undefined>;
+  getBookByCategoryId(
+    category_id: string
+  ): Promise<IBookAttributes[] | undefined>;
+  updateBook(
+    id: string,
+    title: string,
+    category_id: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<IBookAttributes[] | undefined>;
+  deleteBook(id: string): Promise<IBookAttributes[] | undefined>;
+}
+
+export interface IBookService {
+  createBook(
+    category_id: string,
+    title: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<any>;
+  getAllBooks(): Promise<any>;
+  getBookById(id: string): Promise<any>;
+  getBookByCode(book_code: string): Promise<any>;
+  getBookByTitle(title: string): Promise<any>;
+  getBookByCategoryId(category_id: string): Promise<any>;
+  updateBook(
+    id: string,
+    title: string,
+    category_id: string,
+    desc: string,
+    audio_link: string,
+    cover_image: string
+  ): Promise<any>;
+  deleteBook(id: string): Promise<any>;
+}
+
+export interface IRoleAttributes {
+  id?: number;
+  name?: string;
+}
+
+export interface IRoleDao {
+  getAllRoles(): Promise<IRoleAttributes[] | any>;
+  getRoleById(id: number): Promise<IRoleAttributes[] | any>;  
+}
+
+export interface IRoleService {
+  getAllRoles(): Promise<any>;
 }

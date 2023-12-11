@@ -9,99 +9,132 @@ datasource db {
   url      = env("DB_URL")
 }
 
+// User model
+model User {
+  ID          String    @id @default(uuid())
+  role_id     Int?
+  username    String?
+  email       String?
+  phone       String?
+  age         Int?
+  avatar      String?
+  created_date DateTime?  @default(now())
+  role        Role?      @relation(fields: [role_id], references: [ID])
+  
+  // Relations
+  favourites  Favourite[]
+  libraries   Library[]
+  histories   HistoryQuiz[]
+  reviews     Review[]
+}
+
+// Role model
+model Role {
+  ID       Int   @id @default(autoincrement())
+  name     String?
+  
+  // Relations
+  users    User[]
+}
+
+// Favourite model
+model Favourite {
+  ID           String    @id @default(uuid())
+  user_id      String?
+  book_id      String?
+  book         Book?      @relation(fields: [book_id], references: [ID])
+  user         User?      @relation(fields: [user_id], references: [ID])
+  is_added     Boolean?   @default(false)
+  created_date DateTime?  @default(now())
+}
+
+// Library model
+model Library {
+  ID           String    @id @default(uuid())
+  user         User?      @relation(fields: [user_id], references: [ID])
+  user_id      String?
+  book         Book?      @relation(fields: [book_id], references: [ID])
+  book_id      String?
+  is_read      Boolean?   @default(false)
+  created_date DateTime?  @default(now())
+}
+
+// Book model
 model Book {
-  ID              String               @id
-  category_id     Int?
-  review_id       Int?
-  title           String?
-  description     String?
-  audio_link      String?
-  cover_image     String?
-  created_date    DateTime?
-  category        Category?            @relation(fields: [category_id], references: [ID])
-  interactions    UserbookInteraction[]
-  reviews         Review[]             @relation("BookToReview")
-  quizzes         BookQuiz[]
-  favourites       Favourite[]
+  ID           String    @id @default(uuid())
+  category_id  String?
+  agegroup_id  String?
+  book_code    String?
+  title        String?
+  desc         String?
+  duration     String?
+  audio_link   String?
+  cover_image  String?
+  created_date DateTime?  @default(now())
+  category     Category?  @relation(fields: [category_id], references: [ID])
+  agegroup     AgeGroup?  @relation(fields: [agegroup_id], references: [ID])
+  
+  // Relations
+  favourites   Favourite[]
+  libraries    Library[]
+  bookQuizzes  BookQuiz[]
+  reviews      Review[]
 }
 
-model BookQuiz {
-  ID             Int      @id @default(autoincrement())
-  book_id        String?
-  questions      String?
-  options        String?
-  correct_answer String?
-  created_date   DateTime?
-  book           Book?    @relation(fields: [book_id], references: [ID])
-  attempts       UserquizAttempt[]
-}
-
+// Category model
 model Category {
-  ID          Int      @id @default(autoincrement())
-  name        String?
-  description String?
+  ID           String   @id @default(uuid())
+  name         String?
+  desc         String?
+
+  // Relations
+  books        Book[]
+}
+
+// Age Group model
+model AgeGroup {
+  ID           String   @id @default(uuid())
+  name         String?
+  desc         String?
+
+  // Relations
   books       Book[]
 }
 
+// BookQuiz model
+model BookQuiz {
+  ID              String    @id @default(uuid())
+  book_id         String?
+  question        String?
+  options         String?
+  correct_answer  String?
+  book            Book?      @relation(fields: [book_id], references: [ID])
+  created_date    DateTime?  @default(now())
+  
+  // Relations
+  histories       HistoryQuiz[]
+}
+
+// HistoryQuiz model
+model HistoryQuiz {
+  ID            String    @id @default(uuid())
+  bookquiz_id   String?
+  user_id       String?
+  scores        Int?
+  user          User?      @relation(fields: [user_id], references: [ID])
+  bookquiz      BookQuiz?  @relation(fields: [bookquiz_id], references: [ID])
+  created_date  DateTime?  @default(now())
+}
+
+// Review model
 model Review {
-  ID          Int      @id
-  user_id     Int?
-  title       String?
-  description String?
-  rating      Int?
-  created_date DateTime?
-  user        User?    @relation(fields: [user_id], references: [ID])
-  book        Book[]   @relation("BookToReview")
-}
-
-model Role {
-  ID    Int      @id @default(autoincrement())
-  name  String?
-  users User[]
-}
-
-model User {
-  ID           Int      @id @default(autoincrement())
-  role_id      Int?
-  username     String?
-  email        String?
-  phone        String?
-  age          Int?
-  avatar       String?
-  created_date DateTime?
-  role         Role?    @relation(fields: [role_id], references: [ID])
-  reviews      Review[]
-  interactions UserbookInteraction[]
-  attempts     UserquizAttempt[]
-  favourites    Favourite[]
-}
-
-model UserbookInteraction {
-  ID          Int      @id @default(autoincrement())
-  user_id     Int?
-  book_id     String?
-  is_read     String?
-  created_date DateTime?
-  user        User?    @relation(fields: [user_id], references: [ID])
-  book        Book?    @relation(fields: [book_id], references: [ID])
-}
-
-model UserquizAttempt {
-  ID           Int      @id @default(autoincrement())
-  bookquiz_id  Int?
-  user_id      Int?
-  scores       Int?
-  created_date DateTime?
-  bookquiz     BookQuiz?    @relation(fields: [bookquiz_id], references: [ID])
-  user         User?        @relation(fields: [user_id], references: [ID])
-}
-
-model Favourite {
-  ID          Int      @id @default(autoincrement())
-  user_id     Int?
-  book_id     String?
-  is_added    String?
-  created_date DateTime?
-  user        User?    @relation(fields: [user_id], references: [ID])
-  book        Book?    @relation(fields: [book_id], references: [ID])
+  ID            String    @id @default(uuid())
+  user_id       String?
+  book_id       String?
+  title         String?
+  description   String?
+  rating        Int?
+  created_date  DateTime?
+  user          User?    @relation(fields: [user_id], references: [ID])
+  book          Book?    @relation(fields: [book_id], references: [ID])
 }

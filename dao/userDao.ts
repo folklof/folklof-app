@@ -16,20 +16,38 @@ class UserDao implements IUserDao {
       });
       return user as any;
     } catch (error: any) {
+      console.log(error, "Error retrieving user by email");
       throw new StandardError({
         success: false,
-        message: error.message,
+        message: "Error retrieving user by email",
         status: 500,
       });
     }
   }
 
-  async getUserById(id: number): Promise<IUserAttributes | any> {
+  async getAllUsers(): Promise<IUserAttributes[] | any> {
     try {
-      const userId = parseInt(String(id), 10);
+      const users = await this.prisma.user.findMany({
+        orderBy: {
+          username: "asc",
+        },
+      });
+      return users;
+    } catch (error: any) {
+      console.log(error, "Error retrieving all users");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving all users",
+        status: 500,
+      });
+    }
+  }
+
+  async getUserById(id: string): Promise<IUserAttributes | any> {
+    try {
       const user = await this.prisma.user.findUnique({
         where: {
-          ID: userId,
+          ID: id,
         },
       });
 
@@ -50,6 +68,7 @@ class UserDao implements IUserDao {
   ): Promise<IUserAttributes | any> {
     const default_role_id: number = 1;
     const created_date: Date = new Date();
+    const default_null = null;
 
     try {
       const result = await this.prisma.user.create({
@@ -57,15 +76,18 @@ class UserDao implements IUserDao {
           email,
           username: name,
           avatar: picture,
+          age: default_null,
+          phone: default_null,
           role_id: default_role_id,
           created_date,
         },
       });
       return result;
     } catch (error: any) {
+      console.log(error, "Error creating user");
       throw new StandardError({
         success: false,
-        message: error.message,
+        message: "Error creating user",
         status: 500,
       });
     }

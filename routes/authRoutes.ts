@@ -1,10 +1,7 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import passport from "passport";
-import {
-  handleGoogleLogin,
-  handleLoginFailed,
-  handleLogout,
-} from "../controller/authController";
+import { handleGoogleLogin, handleLogout } from "../controller/authController";
+import { HOST_URL_FRONTEND } from "../utils/constants/urlApi";
 
 const router = express.Router();
 
@@ -15,14 +12,12 @@ router.get(
 
 router.get(
   "/login/callback",
-  passport.authenticate("google", { failureRedirect: "/login-failed" }),
-  (req: Request, res: Response) => {
-    res.redirect("/api/v1/auth/success");
-  }
+  passport.authenticate("google", {
+    failureRedirect: `${HOST_URL_FRONTEND}/auth/failure`, // Front end URL Login Google Failed
+  }),
+  handleGoogleLogin
 );
 
-router.get("/success", handleGoogleLogin);
-router.get("/failure", handleLoginFailed);
 router.get("/logout", handleLogout);
 
 export default router;

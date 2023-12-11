@@ -30,7 +30,7 @@ class UserService implements IUserService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -56,12 +56,12 @@ class UserService implements IUserService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
 
-  async getUserById(id: number) {
+  async getUserById(id: string) {
     try {
       const user = await this.userDao.getUserById(id);
       console.log(user, "isi user");
@@ -83,7 +83,33 @@ class UserService implements IUserService {
       return new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
+      });
+    }
+  }
+
+  async getAllUsers() {
+    try {
+      const users = await this.userDao.getAllUsers();
+
+      if (!users || users.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "User not found",
+          status: 404,
+        });
+      }
+
+      return {
+        success: true,
+        message: users,
+        status: 200,
+      };
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
       });
     }
   }
