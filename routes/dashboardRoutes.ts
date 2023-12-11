@@ -10,7 +10,7 @@ import {
 
 const router = Router();
 
-router.get("/admin", isAuthenticatedGoogle, dashboardAdminAccess);
-router.get("/user", adminAuthorization, dashboardUserAccess);
+router.get("/admin", adminAuthorization, dashboardAdminAccess);
+router.get("/user", isAuthenticatedGoogle, dashboardUserAccess);
 
 export default router;
