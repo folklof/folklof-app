@@ -83,9 +83,11 @@ export interface ICategoryService {
 export interface IBookAttributes {
   id?: string | null;
   category_id?: string | null;
+  agegroup_id?: string | null;
   book_code?: string | null;
   title?: string | null;
   desc?: string | null;
+  duration?: string | null;
   audio_link?: string | null;
   image_cover?: string | null;
   created_date?: Date | null;
@@ -94,7 +96,9 @@ export interface IBookAttributes {
 export interface IBookDao {
   createBook(
     title: string,
+    agegroup_id: string,
     category_id: string,
+    duration: string,
     desc: string,
     audio_link: string,
     cover_image: string
@@ -103,13 +107,17 @@ export interface IBookDao {
   getBookById(id: string): Promise<IBookAttributes[] | undefined>;
   getBookByCode(book_code: string): Promise<IBookAttributes[] | undefined>;
   getBookByTitle(title: string): Promise<IBookAttributes[] | undefined>;
+  getOneBookByTitle(title: string): Promise<IBookAttributes | any>;
+  getBookByAgeGroupId(id: string): Promise<IBookAttributes[] | undefined>;
   getBookByCategoryId(
     category_id: string
   ): Promise<IBookAttributes[] | undefined>;
   updateBook(
     id: string,
     title: string,
+    agegroup_id: string,
     category_id: string,
+    duration: string,
     desc: string,
     audio_link: string,
     cover_image: string
@@ -119,8 +127,10 @@ export interface IBookDao {
 
 export interface IBookService {
   createBook(
-    category_id: string,
     title: string,
+    agegroup_id: string,
+    category_id: string,
+    duration: string,
     desc: string,
     audio_link: string,
     cover_image: string
@@ -134,7 +144,9 @@ export interface IBookService {
     id: string,
     title: string,
     category_id: string,
+    agegroup_id: string,
     desc: string,
+    duration: string,
     audio_link: string,
     cover_image: string
   ): Promise<any>;
@@ -148,9 +160,25 @@ export interface IRoleAttributes {
 
 export interface IRoleDao {
   getAllRoles(): Promise<IRoleAttributes[] | any>;
-  getRoleById(id: number): Promise<IRoleAttributes[] | any>;  
+  getRoleById(id: number): Promise<IRoleAttributes[] | any>;
 }
 
 export interface IRoleService {
   getAllRoles(): Promise<any>;
+}
+
+export interface IAgeGroupAttributes {
+  id?: string | null;
+  name?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IAgeGroupDao {
+  getAllAgeGroups(): Promise<IAgeGroupAttributes[] | undefined>;
+  getAgeGroupById(id: string): Promise<IAgeGroupAttributes[] | undefined>;
+}
+
+export interface IAgeGroupService {
+  getAllAgeGroups(): Promise<any>;
+  getAgeGroupById(id: string): Promise<any>;
 }

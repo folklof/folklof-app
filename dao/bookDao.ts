@@ -1,6 +1,7 @@
 import StandardError from "../utils/constants/standardError";
 import { PrismaClient } from "@prisma/client";
 import { IBookDao, IBookAttributes } from "../utils/types";
+import { generateJakartaDate } from "../utils/helpers/jakartaTime";
 
 class BookDao implements IBookDao {
   private db: PrismaClient;
@@ -12,20 +13,26 @@ class BookDao implements IBookDao {
   async createBook(
     title: string,
     category_id: string,
+    agegroup_id: string,
     desc: string,
+    duration: string,
     audio_link: string,
     cover_image: string
-  ): Promise<IBookAttributes | undefined> {
+  ): Promise<IBookAttributes | any> {
     const book_code = `HAN-${Math.floor(Math.random() * 1000)}`;
+
     try {
       const result = await this.db.book.create({
         data: {
-          category_id,
           book_code,
+          category_id,
+          agegroup_id,
           title,
           desc,
+          duration,
           audio_link,
           cover_image,
+          created_date: generateJakartaDate(),
         },
       });
 
@@ -81,7 +88,9 @@ class BookDao implements IBookDao {
     id: string,
     title: string,
     category_id: string,
+    agegroup_id: string,
     desc: string,
+    duration: string,
     audio_link: string,
     cover_image: string
   ): Promise<IBookAttributes[] | undefined> {
@@ -93,7 +102,9 @@ class BookDao implements IBookDao {
         data: {
           title,
           category_id,
+          agegroup_id,
           desc,
+          duration,
           audio_link,
           cover_image,
         },
@@ -104,7 +115,7 @@ class BookDao implements IBookDao {
       console.log(error, "Error updating book");
       throw new StandardError({
         success: false,
-        message: "Error updating book",
+        message: error.message,
         status: 500,
       });
     }
@@ -149,6 +160,27 @@ class BookDao implements IBookDao {
     }
   }
 
+  async getBookByAgeGroupId(
+    agegroup_id: string
+  ): Promise<IBookAttributes[] | undefined> {
+    try {
+      const book = await this.db.book.findMany({
+        where: {
+          agegroup_id: agegroup_id,
+        },
+      });
+
+      return book;
+    } catch (error: any) {
+      console.log(error, "Error retrieving book by agegroup");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving book by agegroup",
+        status: 500,
+      });
+    }
+  }
+
   async getBookByTitle(title: string): Promise<IBookAttributes[] | undefined> {
     try {
       const book = await this.db.book.findMany({
@@ -160,6 +192,24 @@ class BookDao implements IBookDao {
       });
 
       return book;
+    } catch (error: any) {
+      console.log(error, "Error retrieving book by title");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving book by title",
+        status: 500,
+      });
+    }
+  }
+
+  async getOneBookByTitle(title: string): Promise<IBookAttributes | undefined> {
+    try {
+      const book = await this.db.book.findFirst({
+        where: {
+          title: title,
+        },
+      });
+      return book ? book : undefined;
     } catch (error: any) {
       console.log(error, "Error retrieving book by title");
       throw new StandardError({

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { IUserAttributes, IUserDao } from "../utils/types";
 import StandardError from "../utils/constants/standardError";
+import { generateJakartaDate } from "../utils/helpers/jakartaTime";
 
 class UserDao implements IUserDao {
   private prisma: PrismaClient;
@@ -67,7 +68,6 @@ class UserDao implements IUserDao {
     picture: string
   ): Promise<IUserAttributes | any> {
     const default_role_id: number = 1;
-    const created_date: Date = new Date();
     const default_null = null;
 
     try {
@@ -79,7 +79,7 @@ class UserDao implements IUserDao {
           age: default_null,
           phone: default_null,
           role_id: default_role_id,
-          created_date,
+          created_date: generateJakartaDate(),
         },
       });
       return result;

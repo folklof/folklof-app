@@ -32,11 +32,21 @@ async function createBook(req: Request, res: Response, next: NextFunction) {
   const bookService = new BookService(bookDao);
 
   try {
-    const { title, category_id, desc, audio_link, cover_image } = req.body;
-    const result = await bookService.createBook(
-      category_id,
+    const {
       title,
+      category_id,
+      agegroup_id,
       desc,
+      duration,
+      audio_link,
+      cover_image,
+    } = req.body;
+    const result = await bookService.createBook(
+      title,
+      category_id,
+      agegroup_id,
+      desc,
+      duration,
       audio_link,
       cover_image
     );
@@ -65,14 +75,24 @@ async function updateBook(req: Request, res: Response, next: NextFunction) {
 
   try {
     const { id } = req.params as any;
-    const { title, category_id, desc, audio_link, cover_image } = req.body;
+    const {
+      title,
+      category_id,
+      agegroup_id,
+      desc,
+      duration,
+      audio_link,
+      cover_image,
+    } = req.body;
     const result = await bookService.updateBook(
       id,
       title,
       category_id,
+      agegroup_id,
+      duration,
       desc,
       audio_link,
-      cover_image
+      cover_image,
     );
 
     if (result.success) {

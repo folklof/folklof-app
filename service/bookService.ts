@@ -11,14 +11,43 @@ class BookService implements IBookService {
   async createBook(
     title: string,
     category_id: string,
+    agegroup_id: string,
     desc: string,
+    duration: string,
     audio_link: string,
     cover_image: string
   ) {
     try {
-      const getCategory = await this.bookDao.getBookByCategoryId(category_id);
+      const getBookCategory = await this.bookDao.getBookByCategoryId(
+        category_id
+      );
 
-      if (!getCategory || getCategory.length === 0) {
+      const getBookAgeGroup = await this.bookDao.getBookByAgeGroupId(
+        agegroup_id
+      );
+
+      if (!getBookAgeGroup || getBookAgeGroup.length === 0) {
+        throw new StandardError({
+          success: false,
+          message:
+            "Error creating a book: Age group not found. Please check the age group ID",
+          status: 404,
+        });
+      }
+
+      const getBookTitle = await this.bookDao.getOneBookByTitle(title);
+
+      console.log(getBookTitle, "getBookTitle");
+
+      if (getBookTitle && getBookTitle.length > 0) {
+        throw new StandardError({
+          success: false,
+          message: "Error creating a book: Book title already exists",
+          status: 400,
+        });
+      }
+
+      if (!getBookCategory || getBookCategory.length === 0) {
         throw new StandardError({
           success: false,
           message:
@@ -28,9 +57,11 @@ class BookService implements IBookService {
       }
 
       const book = await this.bookDao.createBook(
-        category_id,
         title,
+        category_id,
+        agegroup_id,
         desc,
+        duration,
         audio_link,
         cover_image
       );
@@ -108,6 +139,8 @@ class BookService implements IBookService {
     id: string,
     title: string,
     category_id: string,
+    agegroup_id: string,
+    duration: string,
     desc: string,
     audio_link: string,
     cover_image: string
@@ -128,7 +161,9 @@ class BookService implements IBookService {
         id,
         title,
         category_id,
+        agegroup_id,
         desc,
+        duration,
         audio_link,
         cover_image
       );

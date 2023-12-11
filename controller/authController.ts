@@ -25,16 +25,6 @@ async function handleGoogleLogin(
   }
 }
 
-function userProfile(req: Request, res: Response) {
-  const user = req.user as any;
-
-  if (user) {
-    res.json({ success: true, message: "User profile", data: user._json });
-  } else {
-    res.status(404).json({ success: false, message: "User not found" });
-  }
-}
-
 async function handleLogout(
   req: Request,
   res: Response,
@@ -59,4 +49,4 @@ async function handleLogout(
   });
 }
 
-export { handleGoogleLogin, userProfile, handleLogout };
+export { handleGoogleLogin, handleLogout };
