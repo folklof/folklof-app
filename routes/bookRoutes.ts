@@ -7,6 +7,7 @@ import {
   updateBook,
   deleteBook,
   getBookByTitle,
+  getBookByAgeGroupId,
   getBookByCategoryId,
 } from "../controller/bookController";
 
@@ -23,6 +24,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 router.get("/:id", getBookById);
 router.get("/code/:code", getBookByCode);
 router.get("/category/:category_id", getBookByCategoryId);
+router.get("/age-group/:agegroup_id", getBookByAgeGroupId);
 router.post("/", createBook);
 router.put("/:id", updateBook);
 router.delete("/:id", deleteBook);

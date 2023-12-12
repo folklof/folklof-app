@@ -103,7 +103,13 @@ export interface IBookDao {
     audio_link: string,
     cover_image: string
   ): Promise<IBookAttributes | any>;
-  getAllBooks(): Promise<IBookAttributes[] | undefined>;
+  getAllBooks(
+    page: number,
+    limit: number,
+    sort: number,
+    agegroup_id?: string,
+    category_id?: string
+  ): Promise<IBookAttributes[] | undefined>;
   getBookById(id: string): Promise<IBookAttributes[] | undefined>;
   getBookByCode(book_code: string): Promise<IBookAttributes[] | undefined>;
   getBookByTitle(title: string): Promise<IBookAttributes[] | undefined>;
@@ -123,6 +129,8 @@ export interface IBookDao {
     cover_image: string
   ): Promise<IBookAttributes[] | undefined>;
   deleteBook(id: string): Promise<IBookAttributes[] | undefined>;
+  getCategoryById(id: string): Promise<ICategoryAttributes[] | undefined>;
+  getAgeGroupById(id: string): Promise<IAgeGroupAttributes[] | undefined>;
 }
 
 export interface IBookService {
@@ -135,11 +143,18 @@ export interface IBookService {
     audio_link: string,
     cover_image: string
   ): Promise<any>;
-  getAllBooks(): Promise<any>;
+  getAllBooks(
+    page: number,
+    limit: number,
+    sort: number,
+    agegroup_id?: string,
+    category_id?: string
+  ): Promise<any>;
   getBookById(id: string): Promise<any>;
   getBookByCode(book_code: string): Promise<any>;
   getBookByTitle(title: string): Promise<any>;
   getBookByCategoryId(category_id: string): Promise<any>;
+  getBookByAgeGroupId(agegroup_id: string): Promise<any>; 
   updateBook(
     id: string,
     title: string,

@@ -8,7 +8,14 @@ async function getAllBooks(req: Request, res: Response, next: NextFunction) {
   const bookService = new BookService(bookDao);
 
   try {
-    const result = await bookService.getAllBooks();
+    const { page, limit, sort, category_id, agegroup_id } = req.query as any;
+    const result = await bookService.getAllBooks(
+      page,
+      limit,
+      sort,
+      category_id,
+      agegroup_id
+    );
     if (result.success) {
       return res.status(200).json({
         success: true,
@@ -68,6 +75,35 @@ async function createBook(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function getBookByAgeGroupId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const bookDao = new BookDao(db);
+  const bookService = new BookService(bookDao);
+
+  try {
+    const { agegroup_id } = req.params as any;
+    const result = await bookService.getBookByAgeGroupId(agegroup_id);
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully get a book",
+        data: result.message,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Book not found",
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
 async function updateBook(req: Request, res: Response, next: NextFunction) {
   const { db } = req as any;
   const bookDao = new BookDao(db);
@@ -92,7 +128,7 @@ async function updateBook(req: Request, res: Response, next: NextFunction) {
       duration,
       desc,
       audio_link,
-      cover_image,
+      cover_image
     );
 
     if (result.success) {
@@ -243,6 +279,7 @@ export {
   getBookByCode,
   getBookById,
   deleteBook,
+  getBookByAgeGroupId,
   getBookByCategoryId,
   getBookByTitle,
 };
