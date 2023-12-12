@@ -154,7 +154,7 @@ export interface IBookService {
   getBookByCode(book_code: string): Promise<any>;
   getBookByTitle(title: string): Promise<any>;
   getBookByCategoryId(category_id: string): Promise<any>;
-  getBookByAgeGroupId(agegroup_id: string): Promise<any>; 
+  getBookByAgeGroupId(agegroup_id: string): Promise<any>;
   updateBook(
     id: string,
     title: string,
@@ -196,4 +196,57 @@ export interface IAgeGroupDao {
 export interface IAgeGroupService {
   getAllAgeGroups(): Promise<any>;
   getAgeGroupById(id: string): Promise<any>;
+}
+
+export interface IReviewAttributes {
+  id?: string | null;
+  user_id?: string | null;
+  book_id?: string | null;
+  rating?: number | null;
+  comment?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IReviewDao {
+  createReview(
+    user_id: string,
+    book_id: string,
+    title: string,
+    description: string,
+    rating: number
+  ): Promise<IReviewAttributes | any>;
+  getAllReviews(): Promise<IReviewAttributes[] | undefined>;
+  getReviewById(id: string): Promise<IReviewAttributes[] | undefined>;
+  getUserById(id: string): Promise<IUserAttributes[] | undefined>;
+  getBookById(id: string): Promise<IBookAttributes[] | undefined>;
+  getBookRatingAverage(
+    book_id: string
+  ): Promise<IReviewAttributes[] | undefined>;
+  getReviewByBookId(book_id: string): Promise<IReviewAttributes[] | undefined>;
+  updateReviewById(
+    id: string,
+    user_id: string,
+    title: string,
+    description: string,
+    rating: number
+  ): Promise<IReviewAttributes[] | undefined>;
+  deleteReviewById(
+    id: string,
+    user_id: string
+  ): Promise<IReviewAttributes[] | undefined>;
+}
+
+export interface IReviewService {
+  createReview(
+    user_id: string,
+    book_id: string,
+    title: string,
+    description: string,
+    rating: number
+  ): Promise<any>;
+  getAllReviews(): Promise<any>;
+  getReviewById(id: string): Promise<any>;
+  getBookRatingAverage(book_id: string): Promise<any>;
+  getReviewByBookId(book_id: string): Promise<any>;
+  deleteReviewById(id: string, user_id: string): Promise<any>;
 }
