@@ -10,11 +10,7 @@ class CategoryService implements ICategoryService {
 
   async createCategory(name: string, desc: string) {
     try {
-      const isCategoryExist = await this.categoryDao.getOneCategoryByName(
-        name
-      );
-
-      console.log(isCategoryExist);
+      const isCategoryExist = await this.categoryDao.getOneCategoryByName(name);
 
       if (isCategoryExist && isCategoryExist.length > 0) {
         throw new StandardError({

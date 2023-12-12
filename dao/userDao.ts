@@ -4,15 +4,15 @@ import StandardError from "../utils/constants/standardError";
 import { generateJakartaDate } from "../utils/helpers/jakartaTime";
 
 class UserDao implements IUserDao {
-  private prisma: PrismaClient;
+  private db: PrismaClient;
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
+  constructor(db: PrismaClient) {
+    this.db = db;
   }
 
   async getUserByEmail(email: string) {
     try {
-      const user = await this.prisma.user.findFirst({
+      const user = await this.db.user.findFirst({
         where: { email: email },
       });
       return user as any;
@@ -28,13 +28,13 @@ class UserDao implements IUserDao {
 
   async getAllUsers(): Promise<IUserAttributes[] | any> {
     try {
-      const users = await this.prisma.user.findMany({
+      const users = await this.db.user.findMany({
         orderBy: {
           username: "asc",
         },
         include: {
           role: true,
-        }
+        },
       });
       return users;
     } catch (error: any) {
@@ -49,7 +49,7 @@ class UserDao implements IUserDao {
 
   async getUserById(id: string): Promise<IUserAttributes | any> {
     try {
-      const user = await this.prisma.user.findUnique({
+      const user = await this.db.user.findUnique({
         where: {
           ID: id,
         },
@@ -74,7 +74,7 @@ class UserDao implements IUserDao {
     const default_null = null;
 
     try {
-      const result = await this.prisma.user.create({
+      const result = await this.db.user.create({
         data: {
           email,
           username: name,
