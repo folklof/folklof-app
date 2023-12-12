@@ -32,6 +32,9 @@ class UserDao implements IUserDao {
         orderBy: {
           username: "asc",
         },
+        include: {
+          role: true,
+        }
       });
       return users;
     } catch (error: any) {

@@ -1,7 +1,13 @@
 import StandardError from "../utils/constants/standardError";
 import { PrismaClient } from "@prisma/client";
-import { IBookDao, IBookAttributes } from "../utils/types";
+import {
+  IBookDao,
+  IBookAttributes,
+  ICategoryAttributes,
+  IAgeGroupAttributes,
+} from "../utils/types";
 import { generateJakartaDate } from "../utils/helpers/jakartaTime";
+import { ca } from "date-fns/locale";
 
 class BookDao implements IBookDao {
   private db: PrismaClient;
@@ -20,6 +26,9 @@ class BookDao implements IBookDao {
     cover_image: string
   ): Promise<IBookAttributes | any> {
     const book_code = `HAN-${Math.floor(Math.random() * 1000)}`;
+
+    console.log(agegroup_id, "agegroup_id");
+    console.log(category_id, "category_id");
 
     try {
       const result = await this.db.book.create({
@@ -47,11 +56,41 @@ class BookDao implements IBookDao {
     }
   }
 
-  async getAllBooks(): Promise<IBookAttributes[] | undefined> {
+  async getAllBooks(
+    page?: number,
+    limit?: number,
+    sort?: number,
+    agegroup_id?: string,
+    category_id?: string
+  ): Promise<IBookAttributes[] | undefined> {
+    const convertPage = Number(page) || 1;
+    const convertLimit = Number(limit) || 25;
+    const converSort = Number(sort) || 2;
+
+    console.log(category_id, "category_id");
+    console.log(agegroup_id, "agegroup_id");
     try {
+      const sortOptions = converSort === 2 ? "desc" : "asc";
+      let whereClause: any = {};
+
+      if (category_id) {
+        whereClause.category_id = category_id;
+      }
+
+      if (agegroup_id) {
+        whereClause.agegroup_id = agegroup_id;
+      }
+
       const books = await this.db.book.findMany({
+        skip: (convertPage - 1) * convertLimit,
+        take: convertLimit,
         orderBy: {
-          title: "asc",
+          created_date: sortOptions,
+        },
+        where: whereClause,
+        include: {
+          category: true,
+          agegroup: true,
         },
       });
       return books;
@@ -115,7 +154,7 @@ class BookDao implements IBookDao {
       console.log(error, "Error updating book");
       throw new StandardError({
         success: false,
-        message: error.message,
+        message: "Error updating book. Please make sure you input valid data",
         status: 500,
       });
     }
@@ -143,13 +182,13 @@ class BookDao implements IBookDao {
     category_id: string
   ): Promise<IBookAttributes[] | undefined> {
     try {
-      const book = await this.db.book.findMany({
+      const book = await this.db.book.findFirst({
         where: {
           category_id: category_id,
         },
       });
 
-      return book;
+      return book ? [book] : [];
     } catch (error: any) {
       console.log(error, "Error retrieving book by category");
       throw new StandardError({
@@ -234,6 +273,46 @@ class BookDao implements IBookDao {
       throw new StandardError({
         success: false,
         message: "Error deleting book",
+        status: 500,
+      });
+    }
+  }
+
+  async getCategoryById(
+    id: string
+  ): Promise<ICategoryAttributes[] | undefined> {
+    try {
+      const category = await this.db.category.findUnique({
+        where: {
+          ID: id,
+        },
+      });
+
+      return category ? [category] : [];
+    } catch (error: any) {
+      console.log(error, "Error retrieving category by ID");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving category by ID",
+        status: 500,
+      });
+    }
+  }
+
+  async getAgeGroupById(
+    id: string
+  ): Promise<IAgeGroupAttributes[] | undefined> {
+    try {
+      const ageGroup = await this.db.ageGroup.findUnique({
+        where: {
+          ID: id,
+        },
+      });
+      return ageGroup ? [ageGroup] : [];
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: "Error getting age group by ID",
         status: 500,
       });
     }

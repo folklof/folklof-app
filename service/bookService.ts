@@ -18,15 +18,11 @@ class BookService implements IBookService {
     cover_image: string
   ) {
     try {
-      const getBookCategory = await this.bookDao.getBookByCategoryId(
-        category_id
-      );
+      const getCategoryId = await this.bookDao.getCategoryById(category_id);
+      const getAgeGroupById = await this.bookDao.getAgeGroupById(agegroup_id);
+      const getBookTitle = await this.bookDao.getOneBookByTitle(title);
 
-      const getBookAgeGroup = await this.bookDao.getBookByAgeGroupId(
-        agegroup_id
-      );
-
-      if (!getBookAgeGroup || getBookAgeGroup.length === 0) {
+      if (!getAgeGroupById || getAgeGroupById.length === 0) {
         throw new StandardError({
           success: false,
           message:
@@ -35,24 +31,20 @@ class BookService implements IBookService {
         });
       }
 
-      const getBookTitle = await this.bookDao.getOneBookByTitle(title);
-
-      console.log(getBookTitle, "getBookTitle");
-
-      if (getBookTitle && getBookTitle.length > 0) {
-        throw new StandardError({
-          success: false,
-          message: "Error creating a book: Book title already exists",
-          status: 400,
-        });
-      }
-
-      if (!getBookCategory || getBookCategory.length === 0) {
+      if (!getCategoryId || getCategoryId.length === 0) {
         throw new StandardError({
           success: false,
           message:
             "Error creating a book: Category not found. Please check the category ID",
           status: 404,
+        });
+      }
+
+      if (getBookTitle) {
+        throw new StandardError({
+          success: false,
+          message: "Error creating a book: Book title already exists",
+          status: 400,
         });
       }
 
@@ -81,9 +73,21 @@ class BookService implements IBookService {
     }
   }
 
-  async getAllBooks() {
+  async getAllBooks(
+    page: number,
+    limit: number,
+    sort: number,
+    agegroup_id: string,
+    category_id: string
+  ) {
     try {
-      const books = await this.bookDao.getAllBooks();
+      const books = await this.bookDao.getAllBooks(
+        page,
+        limit,
+        sort,
+        category_id,
+        agegroup_id
+      );
 
       if (!books || books.length === 0) {
         throw new StandardError({
@@ -146,14 +150,33 @@ class BookService implements IBookService {
     cover_image: string
   ) {
     try {
-      const getCategory = await this.bookDao.getBookByCategoryId(category_id);
+      const getCategoryId = await this.bookDao.getCategoryById(category_id);
+      const getAgeGroupById = await this.bookDao.getAgeGroupById(agegroup_id);
+      const getBookTitle = await this.bookDao.getOneBookByTitle(title);
 
-      if (!getCategory || getCategory.length === 0) {
+      if (!getAgeGroupById || getAgeGroupById.length === 0) {
+        throw new StandardError({
+          success: false,
+          message:
+            "Error updating a book: Age group not found. Please check the age group ID",
+          status: 404,
+        });
+      }
+
+      if (!getCategoryId || getCategoryId.length === 0) {
         throw new StandardError({
           success: false,
           message:
             "Error updating a book: Category not found. Please check the category ID",
           status: 404,
+        });
+      }
+
+      if (getBookTitle) {
+        throw new StandardError({
+          success: false,
+          message: "Error updating a book: Book title already exists",
+          status: 400,
         });
       }
 
@@ -179,6 +202,33 @@ class BookService implements IBookService {
         success: false,
         message: error.message,
         status: error.status,
+      });
+    }
+  }
+
+  async getBookByAgeGroupId(agegroup_id: string): Promise<any> {
+    try {
+      const books = await this.bookDao.getBookByAgeGroupId(agegroup_id);
+
+      if (!books || books.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "Book not found",
+          status: 404,
+        });
+      }
+
+      return {
+        success: true,
+        message: books,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error retrieving book by age group");
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving book by age group",
+        status: 500,
       });
     }
   }
