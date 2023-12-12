@@ -1,7 +1,7 @@
 import UserService from "../service/userService";
 import UserDao from "../dao/userDao";
 import { Request, Response, NextFunction } from "express";
-import { HOST_URL_FRONTEND } from "../utils/constants/urlApi";
+import { HOST_URL_FRONTEND } from "../utils/config/urlApi";
 
 async function handleGoogleLogin(
   req: Request,
