@@ -7,7 +7,6 @@ import {
   IAgeGroupAttributes,
 } from "../utils/types";
 import { generateJakartaDate } from "../utils/helpers/jakartaTime";
-import { ca } from "date-fns/locale";
 
 class BookDao implements IBookDao {
   private db: PrismaClient;
@@ -66,9 +65,7 @@ class BookDao implements IBookDao {
     const convertPage = Number(page) || 1;
     const convertLimit = Number(limit) || 25;
     const converSort = Number(sort) || 2;
-
-    console.log(category_id, "category_id");
-    console.log(agegroup_id, "agegroup_id");
+    
     try {
       const sortOptions = converSort === 2 ? "desc" : "asc";
       let whereClause: any = {};
