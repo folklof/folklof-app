@@ -1,5 +1,8 @@
 import StandardError from "../utils/constants/standardError";
 import { IBookService, IBookDao } from "../utils/types";
+import openai from "../utils/config/openAiConfig";
+import fs from "fs";
+import path from "path";
 
 class BookService implements IBookService {
   private bookDao: IBookDao;
@@ -65,6 +68,153 @@ class BookService implements IBookService {
       };
     } catch (error: any) {
       console.log(error, "Error creating book");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async generateBookByAI(user_prompt: string, agegroup_id: string) {
+    try {
+      const user = await this.bookDao.getAgeGroupById(agegroup_id);
+
+      if (!user || user.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "Age group not found",
+          status: 404,
+        });
+      }
+      const generateBook = await openai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content: `You are a story teller expert that could generate children's story books. Your goal is to create engaging, fun, and age-appropriate stories based on user prompts. The English grammar level should based on ${user[0].name} kids, make it easier for them to understand & learn. Maximum character story should be 1200`,
+          },
+          { role: "user", content: user_prompt },
+        ],
+        model: "gpt-3.5-turbo",
+        max_tokens: 1000,
+      });
+
+      return {
+        success: true,
+        message: generateBook.choices[0]?.message?.content,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error generating book by AI");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async generateBookByAIStream(
+    user_prompt: string,
+    title_book: string,
+    agegroup_id: string
+  ) {
+    try {
+      const user = await this.bookDao.getAgeGroupById(agegroup_id);
+
+      if (!user || user.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "Age group not found",
+          status: 404,
+        });
+      }
+
+      const generateBook = openai.beta.chat.completions.stream({
+        messages: [
+          {
+            role: "system",
+            content: `You are a story teller expert that could generate children's story books only. Your goal is to create engaging, fun, and age-appropriate stories based on user prompt and its title name: ${title_book}. The grammar level should be like ${user[0].name} kids, make it easier for them to understand & learn. Maximum character story should be 1000`,
+          },
+          { role: "user", content: user_prompt },
+        ],
+        model: "gpt-3.5-turbo",
+        max_tokens: 1000,
+      });
+
+      for await (const chunk of generateBook) {
+        process.stdout.write(chunk.choices[0]?.delta?.content || "");
+      }
+
+      const chatCompletion = await generateBook.finalChatCompletion();
+
+      return {
+        success: true,
+        message: chatCompletion.choices[0]?.message?.content,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error generating book by AI");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async generateTextToSpeechByAI(book_story: string, title_book: string) {
+    try {
+      const speechFile = path.resolve(`./audio/${title_book}.mp3`);
+
+      const mp3 = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "echo",
+        input: book_story,
+      });
+      console.log(speechFile);
+      const buffer = Buffer.from(await mp3.arrayBuffer());
+      await fs.promises.writeFile(speechFile, buffer);
+
+      return {
+        success: true,
+        message: `${title_book}.mp3`,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error generating text to speech by AI");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async generateImageByAI(book_story: string, title_book: string) {
+    try {
+      const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: `This is a children's story book cover image. It should have the title cover "${title_book}". The story is about ${book_story}`,
+        n: 1,
+        size: "1024x1024",
+      });
+
+      if (!response.data) {
+        throw new StandardError({
+          success: false,
+          message: "Error generating image by AI",
+          status: 400,
+        });
+      }
+
+      return {
+        success: true,
+        message: response.data[0].url,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error generating image by AI");
       throw new StandardError({
         success: false,
         message: error.message,

@@ -26,9 +26,6 @@ class BookDao implements IBookDao {
   ): Promise<IBookAttributes | any> {
     const book_code = `HAN-${Math.floor(Math.random() * 1000)}`;
 
-    console.log(agegroup_id, "agegroup_id");
-    console.log(category_id, "category_id");
-
     try {
       const result = await this.db.book.create({
         data: {
@@ -65,7 +62,7 @@ class BookDao implements IBookDao {
     const convertPage = Number(page) || 1;
     const convertLimit = Number(limit) || 25;
     const converSort = Number(sort) || 2;
-    
+
     try {
       const sortOptions = converSort === 2 ? "desc" : "asc";
       let whereClause: any = {};

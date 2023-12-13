@@ -75,6 +75,195 @@ async function createBook(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function generateBookByAI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const bookDao = new BookDao(db);
+  const bookService = new BookService(bookDao);
+
+  try {
+    const { user_prompt, agegroup_id } = req.body;
+    const result = await bookService.generateBookByAI(user_prompt, agegroup_id);
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully generate a book by AI",
+        data: result.message,
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function generateBookByAIStream(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const bookDao = new BookDao(db);
+  const bookService = new BookService(bookDao);
+
+  try {
+    const { user_prompt, title_book, agegroup_id } = req.body;
+    const result = await bookService.generateBookByAIStream(
+      user_prompt,
+      title_book,
+      agegroup_id
+    );
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully generate a book by AI",
+        data: result.message,
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function generateBookAndAudioByAI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const bookDao = new BookDao(db);
+  const bookService = new BookService(bookDao);
+
+  try {
+    const { user_prompt, title_book, agegroup_id } = req.body;
+    const book_result = await bookService.generateBookByAIStream(
+      user_prompt,
+      title_book,
+      agegroup_id
+    );
+    if (book_result.success) {
+      const data = book_result.message ?? "failed to generate book";
+      const convert = await bookService.generateTextToSpeechByAI(
+        data.toString(),
+        title_book
+      );
+      if (convert.success) {
+        return res.status(200).json({
+          success: true,
+          message: "Successfully generate a book & convert to audio by AI",
+          data: {
+            title_book: title_book,
+            book_story: book_result.message,
+            audio_file: convert.message,
+          },
+        });
+      }
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function generateImageByAI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { db } = req as any;
+    const bookDao = new BookDao(db);
+    const bookService = new BookService(bookDao);
+
+    const { book_story, title_book } = req.body;
+    const result = await bookService.generateImageByAI(book_story, title_book);
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully generate a cover image book by AI",
+        data: { image_link: result.message },
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function generateAudioByAI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { db } = req as any;
+    const bookDao = new BookDao(db);
+    const bookService = new BookService(bookDao);
+
+    const { book_story, title_book } = req.body;
+    const result = await bookService.generateTextToSpeechByAI(
+      book_story,
+      title_book
+    );
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully generate a audio book by AI",
+        data: { audio_file: result.message },
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function generateBookAudioAndImageByAI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { db } = req as any;
+    const bookDao = new BookDao(db);
+    const bookService = new BookService(bookDao);
+
+    const { user_prompt, title_book, agegroup_id } = req.body;
+    const book_result = await bookService.generateBookByAIStream(
+      title_book,
+      user_prompt,
+      agegroup_id
+    );
+
+    if (book_result.success) {
+      const data = book_result.message ?? "failed to generate book";
+      const book_audio = await bookService.generateTextToSpeechByAI(
+        data.toString(),
+        title_book
+      );
+      if (book_audio.success) {
+        const book_image = await bookService.generateImageByAI(
+          data,
+          title_book
+        );
+        if (book_image.success) {
+          return res.status(200).json({
+            success: true,
+            message: "Successfully generate a book & convert to audio by AI",
+            data: {
+              title_book: title_book,
+              book_story: book_result.message,
+              audio_file: book_audio.message,
+              image_link: book_image.message,
+            },
+          });
+        }
+      }
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
 async function getBookByAgeGroupId(
   req: Request,
   res: Response,
@@ -282,4 +471,10 @@ export {
   getBookByAgeGroupId,
   getBookByCategoryId,
   getBookByTitle,
+  generateBookByAI,
+  generateBookByAIStream,
+  generateBookAndAudioByAI,
+  generateImageByAI,
+  generateAudioByAI,
+  generateBookAudioAndImageByAI,
 };
