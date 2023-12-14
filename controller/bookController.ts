@@ -442,7 +442,7 @@ async function getBookByTitle(req: Request, res: Response, next: NextFunction) {
   const bookService = new BookService(bookDao);
 
   try {
-    const { title } = req.params as any;
+    const { title } = req.query as any;
     const result = await bookService.getBookByTitle(title);
     if (result.success) {
       return res.status(200).json({
