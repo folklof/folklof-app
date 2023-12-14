@@ -316,3 +316,63 @@ export interface IBookQuizService {
   ): Promise<any>;
   deleteBookQuizById(id: string): Promise<any>;
 }
+
+export interface IHistoryQuizAttributes {
+  id?: string | null;
+  user_id?: string | null;
+  book_id?: string | null;
+  score?: number | null;
+  created_date?: Date | null;
+}
+
+export interface IHistoryQuizDao {
+  createHistoryQuiz(
+    user_id: string,
+    book_id: string,
+    score: number
+  ): Promise<IHistoryQuizAttributes | any>;
+  getAllHistoryQuizzes(): Promise<IHistoryQuizAttributes[] | undefined>;
+  getHistoryQuizById(id: string): Promise<IHistoryQuizAttributes[] | undefined>;
+  getBookQuizById(book_id: string): Promise<IBookQuizAttributes[] | undefined>;
+  getHistoryQuizByBookQuizId(
+    bookquiz_id: string
+  ): Promise<IHistoryQuizAttributes[] | undefined>;
+  getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  getHistoryQuizByUserIdAndBookQuizId(
+    bookquiz_id: string,
+    user_id: string
+  ): Promise<IHistoryQuizAttributes[] | undefined>;
+  getHistoryQuizByUserId(
+    user_id: string
+  ): Promise<IHistoryQuizAttributes[] | undefined>;
+  updateScoresHistoryQuizById(
+    id: string,
+    score: number
+  ): Promise<IHistoryQuizAttributes | undefined>;
+  deleteHistoryQuizById(
+    id: string
+  ): Promise<IHistoryQuizAttributes | undefined>;
+}
+
+export interface IHistoryQuizService {
+  createHistoryQuiz(
+    user_id: string,
+    book_id: string,
+    score: number
+  ): Promise<any>;
+  getAllHistoryQuizzes(): Promise<any>;
+  getHistoryQuizById(id: string): Promise<any>;
+  getHistoryQuizByBookQuizId(bookquiz_id: string): Promise<any>;
+  getHistoryQuizByUserId(user_id: string): Promise<any>;
+  updateScoresHistoryQuizById(id: string, score: number): Promise<any>;
+  deleteHistoryQuizById(id: string): Promise<any>;
+  getHistoryQuizByUserIdAndBookQuizId(
+    bookquiz_id: string,
+    user_id: string
+  ): Promise<any>;
+  calculateTotalScoreForUserInBookQuiz(
+    user_id: string,
+    bookquiz_id: string
+  ): Promise<any>;
+    
+}
