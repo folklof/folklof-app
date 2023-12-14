@@ -216,15 +216,19 @@ class BookDao implements IBookDao {
 
   async getBookByTitle(title: string): Promise<IBookAttributes[] | undefined> {
     try {
-      const book = await this.db.book.findMany({
+      const books = await this.db.book.findMany({
         where: {
           title: {
             contains: title,
           },
         },
+        include: {
+          category: true,
+          agegroup: true,
+        },
       });
 
-      return book;
+      return books;
     } catch (error: any) {
       console.log(error, "Error retrieving book by title");
       throw new StandardError({
