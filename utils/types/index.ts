@@ -250,3 +250,69 @@ export interface IReviewService {
   getReviewByBookId(book_id: string): Promise<any>;
   deleteReviewById(id: string, user_id: string): Promise<any>;
 }
+
+export interface IBookQuizAttributes {
+  id?: string | null;
+  book_id?: string | null;
+  question?: string | null;
+  option1?: string | null;
+  option2?: string | null;
+  option3?: string | null;
+  correct_answer?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IBookQuizDao {
+  createBookQuiz(
+    book_id: string,
+    question: string,
+    option1?: string,
+    option2?: string,
+    option3?: string,
+    correct_answer?: string
+  ): Promise<IBookQuizAttributes | any>;
+  getAllBookQuizzes(): Promise<IBookQuizAttributes[] | undefined>;
+  getBookQuizById(id: string): Promise<IBookQuizAttributes[] | undefined>;
+  answerBookQuiz(
+    id: string,
+    answer: string
+  ): Promise<{ correct: boolean } | undefined>;
+  getBookQuizByBookId(
+    book_id: string
+  ): Promise<IBookQuizAttributes[] | undefined>;
+  updateBookQuizById(
+    id: string,
+    book_id: string,
+    question: string,
+    option1?: string,
+    option2?: string,
+    option3?: string,
+    correct_answer?: string
+  ): Promise<IBookQuizAttributes | undefined>;
+  deleteBookQuizById(id: string): Promise<IBookQuizAttributes | undefined>;
+}
+
+export interface IBookQuizService {
+  createBookQuiz(
+    book_id: string,
+    question: string,
+    option1?: string,
+    option2?: string,
+    option3?: string,
+    correct_answer?: string
+  ): Promise<any>;
+  getAllBookQuizzes(): Promise<any>;
+  getBookQuizById(id: string): Promise<any>;
+  answerBookQuiz(id: string, answer: string): Promise<any>;
+  getBookQuizByBookId(book_id: string): Promise<any>;
+  updateBookQuizById(
+    id: string,
+    book_id: string,
+    question: string,
+    option1?: string,
+    option2?: string,
+    option3?: string,
+    correct_answer?: string
+  ): Promise<any>;
+  deleteBookQuizById(id: string): Promise<any>;
+}

@@ -8,6 +8,7 @@ import roleRoutes from "./roleRoutes";
 import dashboardRoutes from "./dashboardRoutes";
 import ageGroupRoutes from "./ageGroupRoutes";
 import reviewRoutes from "./reviewRoutes";
+import bookQuizRoutes from "./bookQuizRoutes";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/api/v1/roles", roleRoutes);
 router.use("/api/v1/dashboard", dashboardRoutes);
 router.use("/api/v1/age-groups", ageGroupRoutes);
 router.use("/api/v1/reviews", reviewRoutes);
+router.use("/api/v1/book-quiz", bookQuizRoutes);
 
 export default router;
