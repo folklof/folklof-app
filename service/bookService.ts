@@ -3,6 +3,7 @@ import { IBookService, IBookDao } from "../utils/types";
 import openai from "../utils/config/openAiConfig";
 import fs from "fs";
 import path from "path";
+import { randomInt } from "crypto";
 
 class BookService implements IBookService {
   private bookDao: IBookDao;
@@ -95,7 +96,7 @@ class BookService implements IBookService {
           },
           { role: "user", content: user_prompt },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-1106",
         max_tokens: 1000,
       });
 
@@ -138,7 +139,7 @@ class BookService implements IBookService {
           },
           { role: "user", content: user_prompt },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-1106",
         max_tokens: 1000,
       });
 
@@ -167,9 +168,17 @@ class BookService implements IBookService {
     try {
       const speechFile = path.resolve(`./audio/${title_book}.mp3`);
 
+      const models = ["alloy", "fable", "shimmer", "echo", "onyx", "nova"];
+      const randomModelIndex = randomInt(0, models.length);
+      const selectedModel = models[randomModelIndex];
+
       const mp3 = await openai.audio.speech.create({
-        model: "tts-1",
-        voice: "echo",
+        model: "tts-1-hd",
+        voice: selectedModel as
+          | "alloy"
+          | "fable"
+          | "shimmer"
+          | "echo",
         input: book_story,
       });
       console.log(speechFile);
