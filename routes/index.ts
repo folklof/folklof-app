@@ -10,6 +10,7 @@ import ageGroupRoutes from "./ageGroupRoutes";
 import reviewRoutes from "./reviewRoutes";
 import bookQuizRoutes from "./bookQuizRoutes";
 import historyQuiz from "./historyQuizRoutes";
+import libraryRoutes from "./libraryRoutes";
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use("/api/v1/age-groups", ageGroupRoutes);
 router.use("/api/v1/reviews", reviewRoutes);
 router.use("/api/v1/book-quiz", bookQuizRoutes);
 router.use("/api/v1/history-quiz", historyQuiz);
+router.use("/api/v1/library", libraryRoutes);
 
 export default router;

@@ -374,5 +374,47 @@ export interface IHistoryQuizService {
     user_id: string,
     bookquiz_id: string
   ): Promise<any>;
-    
+}
+
+export interface ILibraryAttributes {
+  id?: string | null;
+  user_id?: string | null;
+  book_id?: string | null;
+  is_read?: boolean | null;
+  created_date?: Date | null;
+}
+
+export interface ILibraryDao {
+  createLibrary(
+    user_id: string,
+    book_id: string,
+    is_read: boolean
+  ): Promise<ILibraryAttributes | any>;
+  getAllLibraries(): Promise<ILibraryAttributes[] | undefined>;
+  getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  getLibraryIsReadByUserId(
+    user_id: string,
+    is_read: boolean
+  ): Promise<ILibraryAttributes[] | undefined>;
+  getLibraryByUserId(
+    user_id: string
+  ): Promise<ILibraryAttributes[] | undefined>;
+  updateIsReadLibraryById(
+    id: string,
+    is_read: boolean
+  ): Promise<ILibraryAttributes | undefined>;
+  deleteLibraryById(id: string): Promise<ILibraryAttributes | undefined>;
+}
+
+export interface ILibraryService {
+  createLibrary(
+    user_id: string,
+    book_id: string,
+    is_read: boolean
+  ): Promise<any>;
+  getAllLibraries(): Promise<any>;
+  getLibraryIsReadByUserId(user_id: string, is_read: boolean): Promise<any>;
+  getLibraryByUserId(user_id: string): Promise<any>;
+  updateIsReadLibraryById(id: string, is_read: boolean): Promise<any>;
+  deleteLibraryById(id: string): Promise<any>;
 }
