@@ -418,3 +418,49 @@ export interface ILibraryService {
   updateIsReadLibraryById(id: string, is_read: boolean): Promise<any>;
   deleteLibraryById(id: string): Promise<any>;
 }
+
+export interface IFavouriteAttributes {
+  id?: string | null;
+  user_id?: string | null;
+  book_id?: string | null;
+  is_added?: boolean | null;
+  created_date?: Date | null;
+}
+
+export interface IFavouriteDao {
+  createFavourite(
+    user_id: string,
+    book_id: string,
+    is_added: boolean
+  ): Promise<IFavouriteAttributes | any>;
+  getAllFavourites(): Promise<IFavouriteAttributes[] | undefined>;
+  getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  getFavouriteIsFavouriteByUserId(
+    user_id: string,
+    is_added: boolean
+  ): Promise<IFavouriteAttributes[] | undefined>;
+  getFavouriteByUserId(
+    user_id: string
+  ): Promise<IFavouriteAttributes[] | undefined>;
+  updateIsAddedFavouriteById(
+    id: string,
+    is_added: boolean
+  ): Promise<IFavouriteAttributes | undefined>;
+  deleteFavouriteById(id: string): Promise<IFavouriteAttributes | undefined>;
+}
+
+export interface IFavouriteService {
+  createFavourite(
+    user_id: string,
+    book_id: string,
+    is_added: boolean
+  ): Promise<any>;
+  getAllFavourites(): Promise<any>;
+  getFavouriteIsFavouriteByUserId(
+    user_id: string,
+    is_added: boolean
+  ): Promise<any>;
+  getFavouriteByUserId(user_id: string): Promise<any>;
+  updateIsAddedFavouriteById(id: string, is_added: boolean): Promise<any>;
+  deleteFavouriteById(id: string): Promise<any>;
+}
