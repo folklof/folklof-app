@@ -12,7 +12,7 @@ datasource db {
 // User model
 model User {
   ID          String    @id @default(uuid())
-  role_id     Int?
+  role_id     Int
   username    String?
   email       String?
   phone       String?
@@ -40,8 +40,8 @@ model Role {
 // Favourite model
 model Favourite {
   ID           String    @id @default(uuid())
-  user_id      String?
-  book_id      String?
+  user_id      String
+  book_id      String
   book         Book?      @relation(fields: [book_id], references: [ID])
   user         User?      @relation(fields: [user_id], references: [ID])
   is_added     Boolean?   @default(false)
@@ -51,22 +51,22 @@ model Favourite {
 // Library model
 model Library {
   ID           String    @id @default(uuid())
-  user         User?      @relation(fields: [user_id], references: [ID])
-  user_id      String?
-  book         Book?      @relation(fields: [book_id], references: [ID])
-  book_id      String?
+  user_id      String
+  book_id      String
   is_read      Boolean?   @default(false)
   created_date DateTime?  @default(now())
+  book         Book?      @relation(fields: [book_id], references: [ID])
+  user         User?      @relation(fields: [user_id], references: [ID])
 }
 
 // Book model
 model Book {
   ID           String    @id @default(uuid())
-  category_id  String?
-  agegroup_id  String?
+  category_id  String
+  agegroup_id  String
   book_code    String?
   title        String?
-  desc         String?
+  desc         String?   @db.LongText
   duration     String?
   audio_link   String?
   cover_image  String?
@@ -104,7 +104,7 @@ model AgeGroup {
 // BookQuiz model
 model BookQuiz {
   ID              String    @id @default(uuid())
-  book_id         String?
+  book_id         String
   question        String?
   options         String?
   correct_answer  String?
@@ -118,7 +118,7 @@ model BookQuiz {
 // HistoryQuiz model
 model HistoryQuiz {
   ID            String    @id @default(uuid())
-  bookquiz_id   String?
+  bookquiz_id   String
   user_id       String?
   scores        Int?
   user          User?      @relation(fields: [user_id], references: [ID])
@@ -129,8 +129,8 @@ model HistoryQuiz {
 // Review model
 model Review {
   ID            String    @id @default(uuid())
-  user_id       String?
-  book_id       String?
+  user_id       String
+  book_id       String
   title         String?
   description   String?
   rating        Int?
