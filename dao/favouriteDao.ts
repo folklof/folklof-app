@@ -101,6 +101,10 @@ class FavouriteDao implements IFavouriteDao {
           user_id: user_id,
           is_added: is_added,
         },
+        include: {
+          book: true,
+          user: true,
+        },
       });
 
       return favourite;

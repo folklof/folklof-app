@@ -97,6 +97,10 @@ class LibraryDao implements ILibraryDao {
           user_id: user_id,
           is_read: is_read,
         },
+        include: {
+          book: true,
+          user: true,
+        },
       });
 
       return library;
