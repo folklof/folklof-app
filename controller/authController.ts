@@ -18,7 +18,7 @@ async function handleGoogleLogin(
 
     const result = await userService.checkAndCreateUser(email, name, picture);
     if (result.success) {
-      res.redirect(`${HOST_URL_FRONTEND}/dashboard`);
+      res.redirect(`${HOST_URL_FRONTEND}/auth/success`);
     }
   } catch (err: any) {
     next(err);
