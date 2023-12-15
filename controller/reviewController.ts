@@ -117,7 +117,7 @@ async function getReviewByBookId(
   const reviewService = new ReviewService(reviewDao);
 
   try {
-    const { book_id } = req.query as any;
+    const { book_id } = req.params as any;
     const result = await reviewService.getReviewByBookId(book_id);
     if (result.success) {
       return res.status(200).json({
