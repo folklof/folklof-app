@@ -51,7 +51,9 @@ class FavouriteService implements IFavouriteService {
     try {
       const existingFavourite =
         await this.favouriteDao.getFavouriteByUserIdAndBookId(user_id, book_id);
-      if (existingFavourite) {
+
+        console.log(existingFavourite)
+      if (existingFavourite?.length !== 0) {
         throw new StandardError({
           success: false,
           message:

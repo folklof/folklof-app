@@ -54,7 +54,7 @@ class LibraryService implements ILibraryService {
         user_id,
         book_id
       );
-      if (existingLibrary) {
+      if (existingLibrary?.length !== 0) {
         throw new StandardError({
           success: false,
           message:
