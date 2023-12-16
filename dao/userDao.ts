@@ -14,6 +14,9 @@ class UserDao implements IUserDao {
     try {
       const user = await this.db.user.findFirst({
         where: { email: email },
+        include: {
+          role: true,
+        },
       });
       return user as any;
     } catch (error: any) {
@@ -52,6 +55,9 @@ class UserDao implements IUserDao {
       const user = await this.db.user.findUnique({
         where: {
           ID: id,
+        },
+        include: {
+          role: true,
         },
       });
 

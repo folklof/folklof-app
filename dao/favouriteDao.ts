@@ -16,7 +16,12 @@ class FavouriteDao implements IFavouriteDao {
 
   async getAllFavourites(): Promise<IFavouriteAttributes[] | undefined> {
     try {
-      const favourites = await this.db.favourite.findMany();
+      const favourites = await this.db.favourite.findMany({
+        include: {
+          book: true,
+          user: true,
+        },
+      });
       return favourites;
     } catch (error: any) {
       throw new StandardError({
@@ -35,6 +40,10 @@ class FavouriteDao implements IFavouriteDao {
         where: {
           ID: id,
         },
+        include: {
+          book: true,
+          user: true,
+        }
       });
       return favourite ? [favourite] : [];
     } catch (error: any) {
@@ -53,6 +62,10 @@ class FavouriteDao implements IFavouriteDao {
       const favourite = await this.db.favourite.findMany({
         where: {
           user_id: user_id,
+        },
+        include: {
+          book: true,
+          user: true,
         },
       });
 
