@@ -81,25 +81,23 @@ class LibraryService implements ILibraryService {
     }
   }
 
-  async updateIsReadLibraryById(id: string): Promise<any> {
+  async updateIsReadLibraryById(id: string, is_read: boolean): Promise<any> {
+    const allowedIsRead = [true, false];
+    if (!allowedIsRead.includes(is_read)) {
+      throw new StandardError({
+        success: false,
+        message: "error updating a library: is_read must be true or false",
+        status: 400,
+      });
+    }
     try {
-      let checkLibrary: any = await this.libraryDao.getLibraryById(id);
-      if (!checkLibrary || checkLibrary.length === 0) {
-        throw new StandardError({
-          success: false,
-          message: "error updating a library: Library not found",
-          status: 404,
-        });
-      }
-
-      if ((checkLibrary as any)[0].is_read === true) {
-        checkLibrary = await this.libraryDao.updateIsReadLibraryById(id, false);
-      } else {
-        checkLibrary = await this.libraryDao.updateIsReadLibraryById(id, true);
-      }
+      const library = await this.libraryDao.updateIsReadLibraryById(
+        id,
+        is_read
+      );
       return {
         success: true,
-        message: checkLibrary,
+        message: library,
         status: 200,
       };
     } catch (error: any) {
