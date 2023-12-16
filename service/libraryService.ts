@@ -44,11 +44,24 @@ class LibraryService implements ILibraryService {
     if (!allowedIsRead.includes(is_read)) {
       throw new StandardError({
         success: false,
-        message: "error updating a library: is_read must be true or false",
+        message: "error create a library: is_read must be true or false",
         status: 400,
       });
     }
+
     try {
+      const existingLibrary = await this.libraryDao.getLibraryByUserIdAndBookId(
+        user_id,
+        book_id
+      );
+      if (existingLibrary) {
+        throw new StandardError({
+          success: false,
+          message:
+            "error create a library: User already has a library with the same book",
+          status: 400,
+        });
+      }
       const library = await this.libraryDao.createLibrary(
         user_id,
         book_id,
@@ -68,23 +81,25 @@ class LibraryService implements ILibraryService {
     }
   }
 
-  async updateIsReadLibraryById(id: string, is_read: boolean): Promise<any> {
-    const allowedIsRead = [true, false];
-    if (!allowedIsRead.includes(is_read)) {
-      throw new StandardError({
-        success: false,
-        message: "error updating a library: is_read must be true or false",
-        status: 400,
-      });
-    }
+  async updateIsReadLibraryById(id: string): Promise<any> {
     try {
-      const library = await this.libraryDao.updateIsReadLibraryById(
-        id,
-        is_read
-      );
+      let checkLibrary: any = await this.libraryDao.getLibraryById(id);
+      if (!checkLibrary || checkLibrary.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "error updating a library: Library not found",
+          status: 404,
+        });
+      }
+
+      if ((checkLibrary as any)[0].is_read === true) {
+        checkLibrary = await this.libraryDao.updateIsReadLibraryById(id, false);
+      } else {
+        checkLibrary = await this.libraryDao.updateIsReadLibraryById(id, true);
+      }
       return {
         success: true,
-        message: library,
+        message: checkLibrary,
         status: 200,
       };
     } catch (error: any) {

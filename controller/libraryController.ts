@@ -60,8 +60,8 @@ async function updateIsReadLibraryById(
 
   try {
     const { id } = req.params as any;
-    const { is_read } = req.body;
-    const result = await libraryService.updateIsReadLibraryById(id, is_read);
+    // const { is_read } = req.body;
+    const result = await libraryService.updateIsReadLibraryById(id);
     if (result.success) {
       return res.status(200).json({
         success: true,

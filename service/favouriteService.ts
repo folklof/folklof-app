@@ -47,7 +47,19 @@ class FavouriteService implements IFavouriteService {
         status: 400,
       });
     }
+
     try {
+      const existingFavourite =
+        await this.favouriteDao.getFavouriteByUserIdAndBookId(user_id, book_id);
+      if (existingFavourite) {
+        throw new StandardError({
+          success: false,
+          message:
+            "error create a favourite: User already has a favourite with the same book",
+          status: 400,
+        });
+      }
+
       const favourite = await this.favouriteDao.createFavourite(
         user_id,
         book_id,
@@ -67,26 +79,30 @@ class FavouriteService implements IFavouriteService {
     }
   }
 
-  async updateIsAddedFavouriteById(
-    id: string,
-    is_added: boolean
-  ): Promise<any> {
-    const allowedIsAdded = [true, false];
-    if (!allowedIsAdded.includes(is_added)) {
-      throw new StandardError({
-        success: false,
-        message: "error updating a favourite: is_added must be true or false",
-        status: 400,
-      });
-    }
+  async updateIsAddedFavouriteById(id: string): Promise<any> {
     try {
-      const favourite = await this.favouriteDao.updateIsAddedFavouriteById(
-        id,
-        is_added
-      );
+      let checkFavourite: any = await this.favouriteDao.getFavouriteById(id);
+      if (!checkFavourite || checkFavourite.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "error updating a favourite: No favourite found",
+          status: 404,
+        });
+      }
+      if ((checkFavourite as any)[0].is_added === true) {
+        checkFavourite = await this.favouriteDao.updateIsAddedFavouriteById(
+          id,
+          false
+        );
+      } else {
+        checkFavourite = await this.favouriteDao.updateIsAddedFavouriteById(
+          id,
+          true
+        );
+      }
       return {
         success: true,
-        message: favourite,
+        message: checkFavourite,
         status: 200,
       };
     } catch (error: any) {

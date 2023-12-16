@@ -52,6 +52,31 @@ class LibraryDao implements ILibraryDao {
     }
   }
 
+  async getLibraryByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<ILibraryAttributes[] | undefined> {
+    try {
+      const library = await this.db.library.findFirst({
+        where: {
+          user_id: user_id,
+          book_id: book_id,
+        },
+        include: {
+          book: true,
+          user: true,
+        },
+      });
+      return library ? [library] : [];
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: "Error getting library by user ID and book ID",
+        status: 500,
+      });
+    }
+  }
+
   async getLibraryByUserId(
     user_id: string
   ): Promise<ILibraryAttributes[] | undefined> {
@@ -137,6 +162,10 @@ class LibraryDao implements ILibraryDao {
         },
         data: {
           is_read: is_read,
+        },
+        include: {
+          book: true,
+          user: true,
         },
       });
 

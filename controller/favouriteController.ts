@@ -144,11 +144,7 @@ async function updateIsAddedFavouriteById(
 
   try {
     const { id } = req.params as any;
-    const { is_added } = req.body as any;
-    const result = await favouriteService.updateIsAddedFavouriteById(
-      id,
-      is_added
-    );
+    const result = await favouriteService.updateIsAddedFavouriteById(id);
     if (result.success) {
       return res.status(200).json({
         success: true,

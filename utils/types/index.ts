@@ -391,6 +391,11 @@ export interface ILibraryDao {
     is_read: boolean
   ): Promise<ILibraryAttributes | any>;
   getAllLibraries(): Promise<ILibraryAttributes[] | undefined>;
+  getLibraryById(id: string): Promise<ILibraryAttributes[] | undefined>;
+  getLibraryByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<ILibraryAttributes[] | undefined>;
   getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
   getLibraryIsReadByUserId(
     user_id: string,
@@ -435,6 +440,11 @@ export interface IFavouriteDao {
   ): Promise<IFavouriteAttributes | any>;
   getAllFavourites(): Promise<IFavouriteAttributes[] | undefined>;
   getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  getFavouriteById(id: string): Promise<IFavouriteAttributes[] | undefined>;
+  getFavouriteByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<IFavouriteAttributes[] | undefined>;
   getFavouriteIsFavouriteByUserId(
     user_id: string,
     is_added: boolean

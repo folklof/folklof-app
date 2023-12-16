@@ -43,7 +43,7 @@ class FavouriteDao implements IFavouriteDao {
         include: {
           book: true,
           user: true,
-        }
+        },
       });
       return favourite ? [favourite] : [];
     } catch (error: any) {
@@ -142,6 +142,10 @@ class FavouriteDao implements IFavouriteDao {
         data: {
           is_added: is_added,
         },
+        include: {
+          book: true,
+          user: true,
+        },
       });
 
       return favourite;
@@ -149,6 +153,32 @@ class FavouriteDao implements IFavouriteDao {
       throw new StandardError({
         success: false,
         message: "Error updating favourite by ID",
+        status: 500,
+      });
+    }
+  }
+
+  async getFavouriteByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<IFavouriteAttributes[] | undefined> {
+    try {
+      const favourite = await this.db.favourite.findMany({
+        where: {
+          user_id: user_id,
+          book_id: book_id,
+        },
+        include: {
+          book: true,
+          user: true,
+        },
+      });
+
+      return favourite;
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: "Error getting favourite by user ID",
         status: 500,
       });
     }
@@ -185,6 +215,10 @@ class FavouriteDao implements IFavouriteDao {
         },
         data: {
           is_added: is_added,
+        },
+        include: {
+          book: true,
+          user: true,
         },
       });
 
