@@ -101,6 +101,37 @@ class UserDao implements IUserDao {
       });
     }
   }
+
+  async updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any> {
+    try {
+      const user = await this.db.user.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          age: age,
+          phone: phone,
+          username: name,
+          avatar: avatar,
+        },
+      });
+
+      return user;
+    } catch (error: any) {
+      console.log(error, "Error updating age");
+      throw new StandardError({
+        success: false,
+        message: "Error updating age",
+        status: 500,
+      });
+    }
+  }
 }
 
 export default UserDao;

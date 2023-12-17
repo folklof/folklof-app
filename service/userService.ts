@@ -113,6 +113,44 @@ class UserService implements IUserService {
       });
     }
   }
+
+  async updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ) {
+    try {
+      const user = await this.userDao.updateUserById(
+        id,
+        phone,
+        age,
+        name,
+        avatar
+      );
+
+      if (!user) {
+        throw new StandardError({
+          success: false,
+          message: "User not found",
+          status: 404,
+        });
+      }
+
+      return {
+        success: true,
+        message: user,
+        status: 200,
+      };
+    } catch (error: any) {
+      return new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
 }
 
 export default UserService;

@@ -39,6 +39,13 @@ export interface IUserDao {
   ): Promise<void>;
   getUserById(id: string): Promise<IUserAttributes | any>;
   getAllUsers(): Promise<IUserAttributes[] | any>;
+  updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any>;
 }
 
 export interface IUserService {
@@ -49,6 +56,13 @@ export interface IUserService {
   ): Promise<any>;
   getUserProfile(email: string): Promise<any>;
   getUserById(id: string): Promise<any>;
+  updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<any>;
 }
 
 export interface ICategoryAttributes {
