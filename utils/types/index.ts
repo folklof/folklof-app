@@ -169,6 +169,7 @@ export interface IBookService {
   getBookByTitle(title: string): Promise<any>;
   getBookByCategoryId(category_id: string): Promise<any>;
   getBookByAgeGroupId(agegroup_id: string): Promise<any>;
+  uploadImageToS3(image_file: any, title_book: string): Promise<any>;
   updateBook(
     id: string,
     title: string,

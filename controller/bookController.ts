@@ -1,6 +1,10 @@
 import BookDao from "../dao/bookDao";
 import BookService from "../service/bookService";
+import openai from "../utils/config/openAiConfig";
 import { Request, Response, NextFunction } from "express";
+import multer from "multer";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 async function getAllBooks(req: Request, res: Response, next: NextFunction) {
   const { db } = req as any;
@@ -99,6 +103,35 @@ async function generateBookByAI(
   }
 }
 
+async function generateBookByAIStreamChat(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { title_book, user_prompt } = req.body as any;
+    const generateBook = openai.beta.chat.completions.stream({
+      messages: [
+        {
+          role: "system",
+          content: `You are a story teller expert that could generate children's story books only. Your goal is to create engaging, fun, and age-appropriate stories based on user prompt and its title name: ${title_book}. The grammar level should be easier for them to understand & learn. Maximum character story should be 1000`,
+        },
+        { role: "user", content: user_prompt },
+      ],
+      model: "gpt-3.5-turbo-1106",
+      max_tokens: 1000,
+    });
+
+    for await (const chunk of generateBook) {
+      res.write(chunk.choices[0]?.delta?.content || "");
+    }
+
+    res.end();
+  } catch (error: any) {
+    console.log(error, "Error generating book by AI");
+  }
+}
+
 async function generateBookByAIStream(
   req: Request,
   res: Response,
@@ -115,6 +148,7 @@ async function generateBookByAIStream(
       title_book,
       agegroup_id
     );
+
     if (result.success) {
       return res.status(200).json({
         success: true,
@@ -213,6 +247,49 @@ async function generateAudioByAI(
       });
     }
   } catch (error: any) {
+    next(error);
+  }
+}
+
+async function uploadImageToS3(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { db } = req as any;
+    const bookDao = new BookDao(db);
+    const bookService = new BookService(bookDao);
+
+    upload.single("image_file")(req, res, async function (err) {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading file",
+          error: err.message,
+        });
+      }
+
+      try {
+        const imageFile = req.file;
+        console.log(imageFile, "file");
+        console.log(imageFile.originalname, "title_book");
+
+        const result = await bookService.uploadImageToS3(
+          imageFile,
+        );
+        if (result.success) {
+          return res.status(200).json({
+            success: true,
+            message: "Successfully uploaded to AWS S3",
+            data: { image_link: result.message },
+          });
+        }
+      } catch (error) {
+        next(error);
+      }
+    });
+  } catch (error) {
     next(error);
   }
 }
@@ -477,4 +554,6 @@ export {
   generateImageByAI,
   generateAudioByAI,
   generateBookAudioAndImageByAI,
+  generateBookByAIStreamChat,
+  uploadImageToS3,
 };
