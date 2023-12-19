@@ -15,7 +15,12 @@ class LibraryDao implements ILibraryDao {
 
   async getAllLibraries(): Promise<ILibraryAttributes[] | undefined> {
     try {
-      const libraries = await this.db.library.findMany();
+      const libraries = await this.db.library.findMany({
+        include: {
+          book: true,
+          user: true,
+        },
+      });
       return libraries;
     } catch (error: any) {
       throw new StandardError({
@@ -32,12 +37,41 @@ class LibraryDao implements ILibraryDao {
         where: {
           ID: id,
         },
+        include: {
+          book: true,
+          user: true,
+        },
       });
       return library ? [library] : [];
     } catch (error: any) {
       throw new StandardError({
         success: false,
         message: "Error getting library by ID",
+        status: 500,
+      });
+    }
+  }
+
+  async getLibraryByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<ILibraryAttributes[] | undefined> {
+    try {
+      const library = await this.db.library.findFirst({
+        where: {
+          user_id: user_id,
+          book_id: book_id,
+        },
+        include: {
+          book: true,
+          user: true,
+        },
+      });
+      return library ? [library] : [];
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: "Error getting library by user ID and book ID",
         status: 500,
       });
     }
@@ -50,6 +84,10 @@ class LibraryDao implements ILibraryDao {
       const library = await this.db.library.findMany({
         where: {
           user_id: user_id,
+        },
+        include: {
+          book: true,
+          user: true,
         },
       });
 
@@ -97,6 +135,10 @@ class LibraryDao implements ILibraryDao {
           user_id: user_id,
           is_read: is_read,
         },
+        include: {
+          book: true,
+          user: true,
+        },
       });
 
       return library;
@@ -120,6 +162,10 @@ class LibraryDao implements ILibraryDao {
         },
         data: {
           is_read: is_read,
+        },
+        include: {
+          book: true,
+          user: true,
         },
       });
 

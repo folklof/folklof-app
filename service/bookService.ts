@@ -1,8 +1,8 @@
 import StandardError from "../utils/constants/standardError";
 import { IBookService, IBookDao } from "../utils/types";
 import openai from "../utils/config/openAiConfig";
-import fs from "fs";
-import path from "path";
+import { randomInt } from "crypto";
+import { S3_AWS, S3_BUCKET } from "../utils/config/awsConfig";
 
 class BookService implements IBookService {
   private bookDao: IBookDao;
@@ -95,7 +95,7 @@ class BookService implements IBookService {
           },
           { role: "user", content: user_prompt },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-1106",
         max_tokens: 1000,
       });
 
@@ -138,7 +138,7 @@ class BookService implements IBookService {
           },
           { role: "user", content: user_prompt },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-1106",
         max_tokens: 1000,
       });
 
@@ -165,20 +165,30 @@ class BookService implements IBookService {
 
   async generateTextToSpeechByAI(book_story: string, title_book: string) {
     try {
-      const speechFile = path.resolve(`./audio/${title_book}.mp3`);
+      const models = ["alloy", "fable", "shimmer", "echo", "onyx", "nova"];
+      const randomModelIndex = randomInt(0, models.length);
+      const selectedModel = models[randomModelIndex];
 
       const mp3 = await openai.audio.speech.create({
-        model: "tts-1",
-        voice: "echo",
+        model: "tts-1-hd",
+        voice: selectedModel as "alloy" | "fable" | "shimmer" | "echo",
         input: book_story,
       });
-      console.log(speechFile);
+
       const buffer = Buffer.from(await mp3.arrayBuffer());
-      await fs.promises.writeFile(speechFile, buffer);
+
+      const uploadParams: any = {
+        Bucket: S3_BUCKET,
+        Key: `audio/${title_book}.mp3`,
+        Body: buffer,
+        ACL: "public-read",
+      };
+
+      const uploadResult = await S3_AWS.upload(uploadParams).promise();
 
       return {
         success: true,
-        message: `${title_book}.mp3`,
+        message: uploadResult.Location,
         status: 200,
       };
     } catch (error: any) {
@@ -191,11 +201,37 @@ class BookService implements IBookService {
     }
   }
 
+  async uploadImageToS3(image_file: any) {
+    try {
+      const uploadParams: any = {
+        Bucket: S3_BUCKET,
+        Key: `images/${image_file.originalname}`,
+        Body: image_file.buffer,
+        ACL: "public-read",
+      };
+
+      const uploadResult = await S3_AWS.upload(uploadParams).promise();
+
+      return {
+        success: true,
+        message: uploadResult.Location,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error uploading image to S3");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
   async generateImageByAI(book_story: string, title_book: string) {
     try {
       const response = await openai.images.generate({
         model: "dall-e-3",
-        prompt: `This is a children's story book cover image. It should have the title cover "${title_book}". The story is about ${book_story}`,
+        prompt: `Children's story book image, only for front page. It should have the title image with "${title_book}". The story is about ${book_story}`,
         n: 1,
         size: "1024x1024",
       });

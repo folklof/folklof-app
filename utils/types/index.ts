@@ -39,6 +39,13 @@ export interface IUserDao {
   ): Promise<void>;
   getUserById(id: string): Promise<IUserAttributes | any>;
   getAllUsers(): Promise<IUserAttributes[] | any>;
+  updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any>;
 }
 
 export interface IUserService {
@@ -49,6 +56,13 @@ export interface IUserService {
   ): Promise<any>;
   getUserProfile(email: string): Promise<any>;
   getUserById(id: string): Promise<any>;
+  updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<any>;
 }
 
 export interface ICategoryAttributes {
@@ -155,6 +169,7 @@ export interface IBookService {
   getBookByTitle(title: string): Promise<any>;
   getBookByCategoryId(category_id: string): Promise<any>;
   getBookByAgeGroupId(agegroup_id: string): Promise<any>;
+  uploadImageToS3(image_file: any, title_book: string): Promise<any>;
   updateBook(
     id: string,
     title: string,
@@ -391,6 +406,11 @@ export interface ILibraryDao {
     is_read: boolean
   ): Promise<ILibraryAttributes | any>;
   getAllLibraries(): Promise<ILibraryAttributes[] | undefined>;
+  getLibraryById(id: string): Promise<ILibraryAttributes[] | undefined>;
+  getLibraryByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<ILibraryAttributes[] | undefined>;
   getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
   getLibraryIsReadByUserId(
     user_id: string,
@@ -435,6 +455,11 @@ export interface IFavouriteDao {
   ): Promise<IFavouriteAttributes | any>;
   getAllFavourites(): Promise<IFavouriteAttributes[] | undefined>;
   getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  getFavouriteById(id: string): Promise<IFavouriteAttributes[] | undefined>;
+  getFavouriteByUserIdAndBookId(
+    user_id: string,
+    book_id: string
+  ): Promise<IFavouriteAttributes[] | undefined>;
   getFavouriteIsFavouriteByUserId(
     user_id: string,
     is_added: boolean

@@ -14,6 +14,9 @@ class UserDao implements IUserDao {
     try {
       const user = await this.db.user.findFirst({
         where: { email: email },
+        include: {
+          role: true,
+        },
       });
       return user as any;
     } catch (error: any) {
@@ -53,6 +56,9 @@ class UserDao implements IUserDao {
         where: {
           ID: id,
         },
+        include: {
+          role: true,
+        },
       });
 
       return user;
@@ -91,6 +97,37 @@ class UserDao implements IUserDao {
       throw new StandardError({
         success: false,
         message: "Error creating user",
+        status: 500,
+      });
+    }
+  }
+
+  async updateUserById(
+    id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any> {
+    try {
+      const user = await this.db.user.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          age: age,
+          phone: phone,
+          username: name,
+          avatar: avatar,
+        },
+      });
+
+      return user;
+    } catch (error: any) {
+      console.log(error, "Error updating age");
+      throw new StandardError({
+        success: false,
+        message: "Error updating age",
         status: 500,
       });
     }
