@@ -1,7 +1,9 @@
 import UserService from "../service/userService";
 import UserDao from "../dao/userDao";
 import { Request, Response, NextFunction } from "express";
-import { HOST_URL_FRONTEND } from "../utils/config/urlApi";
+import {
+  HOST_URL_FRONTEND
+} from "../utils/config/urlApi";
 
 async function handleGoogleLogin(
   req: Request,
@@ -15,8 +17,9 @@ async function handleGoogleLogin(
   try {
     const user = req.user as any;
     const { email, name, picture } = user._json;
-
+    console.log(user, "isi user");
     const result = await userService.checkAndCreateUser(email, name, picture);
+    console.log(result, "isi result handle google login");
     if (result.success) {
       res.redirect(`${HOST_URL_FRONTEND}/auth/success`);
     }
