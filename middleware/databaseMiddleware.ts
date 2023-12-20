@@ -2,14 +2,14 @@ import { Request, NextFunction, Response } from "express";
 import StandardError from "../utils/constants/standardError";
 import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
+
 const databaseMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const prisma = new PrismaClient();
-    await prisma.$connect();
     req.db = prisma;
     next();
   } catch (error) {
