@@ -231,7 +231,7 @@ class BookService implements IBookService {
     try {
       const response = await openai.images.generate({
         model: "dall-e-3",
-        prompt: `Children's story book image, only for front page. It should have the title image with "${title_book}". The story is about ${book_story}`,
+        prompt: `Children's story book image, could generate book cover image based on story user. It should have the title image with "${title_book}". The story is ${book_story}`,
         n: 1,
         size: "1024x1024",
       });
