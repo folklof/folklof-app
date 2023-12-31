@@ -19,6 +19,7 @@ class BookDao implements IBookDao {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
@@ -32,6 +33,7 @@ class BookDao implements IBookDao {
           book_code,
           category_id,
           agegroup_id,
+          user_id,
           title,
           desc,
           duration,
@@ -57,7 +59,7 @@ class BookDao implements IBookDao {
     limit?: number,
     sort?: number,
     agegroup_id?: string,
-    category_id?: string
+    category_id?: string,
   ): Promise<IBookAttributes[] | undefined> {
     const convertPage = Number(page) || 1;
     const convertLimit = Number(limit) || 25;
@@ -122,6 +124,7 @@ class BookDao implements IBookDao {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
@@ -140,6 +143,7 @@ class BookDao implements IBookDao {
           duration,
           audio_link,
           cover_image,
+          user_id,
         },
       });
 
