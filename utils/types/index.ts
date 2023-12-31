@@ -98,6 +98,7 @@ export interface IBookAttributes {
   id?: string | null;
   category_id?: string | null;
   agegroup_id?: string | null;
+  user_id?: string | null;
   book_code?: string | null;
   title?: string | null;
   desc?: string | null;
@@ -112,6 +113,7 @@ export interface IBookDao {
     title: string,
     agegroup_id: string,
     category_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -137,6 +139,7 @@ export interface IBookDao {
     title: string,
     agegroup_id: string,
     category_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -152,6 +155,7 @@ export interface IBookService {
     title: string,
     agegroup_id: string,
     category_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -175,6 +179,7 @@ export interface IBookService {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
