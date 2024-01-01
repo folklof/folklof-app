@@ -149,10 +149,21 @@ model Review {
 model RequestBook {
   ID            String @id @default(uuid())
   user_id       String
+  status_id     String
   title         String?
   desc          String? @db.LongText
   cover_image   String?
-  isVerified    Boolean?
   created_date  DateTime?  @default(now())  
   user          User? @relation(fields: [user_id], references: [ID])
+  status        StatusRequestBook? @relation(fields: [status_id], references: [ID])
+}
+
+// Status Request Book model
+model StatusRequestBook {
+  ID             String @id @default(uuid())
+  name           String?
+  desc           String? 
+
+  // Relations
+  RequestBooks  RequestBook[] 
 }

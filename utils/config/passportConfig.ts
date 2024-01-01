@@ -5,13 +5,14 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET as string;
 const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL as string;
+const GOOGLE_CALLBACK_URL_ADMIN = process.env.GOOGLE_CALLBACK_URL_ADMIN as string;
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: GOOGLE_CALLBACK_URL,
+      callbackURL: GOOGLE_CALLBACK_URL_ADMIN,
     },
     (accessToken, refreshToken, profile, done) => {
       return done(null, profile);

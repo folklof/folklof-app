@@ -2,7 +2,7 @@ import UserService from "../service/userService";
 import UserDao from "../dao/userDao";
 import { Request, Response, NextFunction } from "express";
 import {
-  HOST_URL_FRONTEND
+  HOST_URL_FRONTEND_ADMIN
 } from "../utils/config/urlApi";
 
 async function handleGoogleLogin(
@@ -21,7 +21,7 @@ async function handleGoogleLogin(
     const result = await userService.checkAndCreateUser(email, name, picture);
     console.log(result, "isi result handle google login");
     if (result.success) {
-      res.redirect(`${HOST_URL_FRONTEND}/auth/success`);
+      res.redirect(`${HOST_URL_FRONTEND_ADMIN}/auth/success`);
     }
   } catch (err: any) {
     next(err);
