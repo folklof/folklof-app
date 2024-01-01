@@ -243,6 +243,10 @@ export interface IReviewDao {
     book_id: string
   ): Promise<IReviewAttributes[] | undefined>;
   getReviewByBookId(book_id: string): Promise<IReviewAttributes[] | undefined>;
+  getMostPopularBook(
+    limit: number,
+    page: number
+  ): Promise<IReviewAttributes[] | undefined>;
   updateReviewById(
     id: string,
     user_id: string,
@@ -268,6 +272,10 @@ export interface IReviewService {
   getReviewById(id: string): Promise<any>;
   getBookRatingAverage(book_id: string): Promise<any>;
   getReviewByBookId(book_id: string): Promise<any>;
+  getMostPopularBook(
+    limit: number,
+    page: number
+  ): Promise<any>;
   deleteReviewById(id: string, user_id: string): Promise<any>;
 }
 

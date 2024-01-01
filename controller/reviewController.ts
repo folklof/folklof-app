@@ -172,6 +172,35 @@ async function updateReviewById(
   }
 }
 
+async function getMostPopularBook(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const reviewDao = new ReviewDao(db);
+  const reviewService = new ReviewService(reviewDao);
+
+  try {
+    const { limit, page } = req.query as any;
+    const result = await reviewService.getMostPopularBook(limit, page);
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully get most popular book",
+        data: result.message,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found",
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
 async function deleteReviewById(
   req: Request,
   res: Response,
@@ -209,4 +238,5 @@ export {
   getReviewById,
   getBookRatingAverage,
   getReviewByBookId,
+  getMostPopularBook
 };

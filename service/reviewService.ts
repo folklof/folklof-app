@@ -156,6 +156,32 @@ class ReviewService implements IReviewService {
     }
   }
 
+  async getMostPopularBook(limit: number, page: number): Promise<any> {
+    try {
+      const result = await this.reviewDao.getMostPopularBook(limit, page);
+
+      if (!result || result.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "No reviews found",
+          status: 404,
+        });
+      }
+      return {
+        status: 200,
+        success: true,
+        message: result,
+      };
+    } catch (error: any) {
+      console.log(error, "Error getting all reviews");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
   async getReviewByBookId(book_id: string) {
     try {
       const reviews = await this.reviewDao.getReviewByBookId(book_id);

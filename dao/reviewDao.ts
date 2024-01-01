@@ -215,6 +215,8 @@ class ReviewDao implements IReviewDao {
         },
       });
 
+      console.log(result, "result");
+
       const totalBookReviews = await this.db.review.count({
         where: {
           book_id,
@@ -240,6 +242,63 @@ class ReviewDao implements IReviewDao {
       throw new StandardError({
         success: false,
         message: "Error getting average rating & total book reviews",
+        status: 500,
+      });
+    }
+  }
+
+  async getMostPopularBook(limit: number, page: number): Promise<any> {
+    const convertPage = Number(page) || 1;
+    const convertLimit = Number(limit) || 5;
+
+    try {
+      const bestStories = await this.db.review.groupBy({
+        by: ["book_id"],
+        _count: true,
+        _avg: {
+          rating: true,
+        },
+        orderBy: [
+          {
+            _count: {
+              book_id: "desc",
+            },
+          },
+          {
+            _avg: {
+              rating: "desc",
+            },
+          },
+        ],
+        take: convertLimit,
+        skip: (convertPage - 1) * convertLimit,
+      });
+
+      const formattedBestStories = await Promise.all(
+        bestStories.map(async (review) => {
+          const [book] = await Promise.all([
+            this.db.book.findUnique({
+              where: {
+                ID: review.book_id,
+              },
+            }),
+          ]);
+
+          return {
+            book_id: review.book_id,
+            total_reviews: review._count,
+            avg_rating: review._avg.rating,
+            book: book || null,
+          };
+        })
+      );
+
+      return formattedBestStories;
+    } catch (error) {
+      console.error("Error fetching best stories:", error);
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving most popular book",
         status: 500,
       });
     }
