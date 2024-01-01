@@ -494,3 +494,45 @@ export interface IFavouriteService {
   updateIsAddedFavouriteById(id: string, is_added: boolean): Promise<any>;
   deleteFavouriteById(id: string): Promise<any>;
 }
+
+export interface IStatusRequestBookAttributes {
+  id?: string | null;
+  name?: string | null;
+  desc?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IStatusRequestBookDao {
+  getAllStatusRequestBooks(): Promise<
+    IStatusRequestBookAttributes[] | undefined
+  >;
+  createStatusRequestBook(
+    name: string,
+    desc: string
+  ): Promise<IStatusRequestBookAttributes[] | undefined>;
+  updateStatusRequestBook(
+    id: string,
+    name: string,
+    desc: string
+  ): Promise<IStatusRequestBookAttributes[] | undefined>;
+  deleteStatusRequestBook(
+    id: string
+  ): Promise<IStatusRequestBookAttributes[] | undefined>;
+}
+
+export interface IStatusRequestBookService {
+  getAllStatusRequestBooks(): Promise<any>;
+  createStatusRequestBook(name: string, desc: string): Promise<any>;
+  updateStatusRequestBook(id: string, name: string, desc: string): Promise<any>;
+  deleteStatusRequestBook(id: string): Promise<any>;
+}
+
+export interface IRequestBookAttributes {
+  id?: string | null;
+  user_id?: string | null;
+  status_id?: string | null;
+  title?: string | null;
+  desc?: string | null;
+  cover_image?: string | null;
+  created_date?: Date | null;
+}
