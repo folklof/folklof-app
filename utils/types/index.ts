@@ -536,3 +536,50 @@ export interface IRequestBookAttributes {
   cover_image?: string | null;
   created_date?: Date | null;
 }
+
+export interface IRequestBookDao {
+  getAllRequestBooks(): Promise<IRequestBookAttributes[] | undefined>;
+  getRequestBookById(id: string): Promise<IRequestBookAttributes[] | undefined>;
+  getRequestBookByUserId(
+    user_id: string
+  ): Promise<IRequestBookAttributes[] | undefined>;
+  createRequestBook(
+    user_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<IRequestBookAttributes[] | undefined>;
+  updateRequestBook(
+    id: string,
+    user_id: string,
+    status_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<IRequestBookAttributes[] | undefined>;
+  getUserById(user_id: string): Promise<IUserAttributes | undefined>;
+  getRequestBookByTitle(title: string): Promise<IRequestBookAttributes | any>;
+  deleteRequestBook(id: string): Promise<IRequestBookAttributes[] | undefined>;
+}
+
+export interface IRequestBookService {
+  getAllRequestBooks(): Promise<any>;
+  getRequestBookById(id: string): Promise<any>;
+  getRequestBookByUserId(user_id: string): Promise<any>;
+  createRequestBook(
+    user_id: string,
+    status_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<any>;
+  updateRequestBook(
+    id: string,
+    user_id: string,
+    status_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<any>;
+  deleteRequestBook(id: string): Promise<any>;
+}
