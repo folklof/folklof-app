@@ -29,6 +29,29 @@ async function handleGoogleLogin(
   }
 }
 
+async function handleGoogleLoginAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const userDao = new UserDao(db);
+  const userService = new UserService(userDao);
+
+  try {
+    const user = req.user as any;
+    const { email, name, picture } = user._json;
+    console.log(user, "isi user");
+    const result = await userService.checkAndCreateUser(email, name, picture);
+    console.log(result, "isi result handle google admin login");
+    if (result.success) {
+      res.redirect(`${HOST_URL_FRONTEND_ADMIN}/auth/success`);
+    }
+  } catch (err: any) {
+    next(err);
+  }
+}
+
 async function handleLogout(
   req: Request,
   res: Response,
@@ -53,4 +76,4 @@ async function handleLogout(
   });
 }
 
-export { handleGoogleLogin, handleLogout };
+export { handleGoogleLogin, handleGoogleLoginAdmin, handleLogout };
