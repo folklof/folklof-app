@@ -120,6 +120,9 @@ class UserDao implements IUserDao {
           username: name,
           avatar: avatar,
         },
+        include: {
+          role: true
+        }
       });
 
       return user;
@@ -153,6 +156,9 @@ class UserDao implements IUserDao {
           username: name,
           avatar: avatar,
         },
+        include: {
+          role: true
+        }
       });
 
       return user;
