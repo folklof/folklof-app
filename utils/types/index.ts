@@ -46,6 +46,14 @@ export interface IUserDao {
     name: string,
     avatar: string
   ): Promise<IUserAttributes | any>;
+  updateUserForAdminById(
+    id: string,
+    role_id: number,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any>;
 }
 
 export interface IUserService {
@@ -58,6 +66,14 @@ export interface IUserService {
   getUserById(id: string): Promise<any>;
   updateUserById(
     id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<any>;
+  updateUserForAdminById(
+    id: string,
+    role_id: number,
     phone: string,
     age: number,
     name: string,
