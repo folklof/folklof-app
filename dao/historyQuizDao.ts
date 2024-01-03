@@ -206,7 +206,7 @@ class HistoryQuiz implements IHistoryQuizDao {
     bookquiz_id: string
   ): Promise<IHistoryQuizAttributes[] | undefined> {
     try {
-      const historyQuiz = await this.db.historyQuiz.findMany({
+      const historyQuiz = await this.db.historyQuiz.findFirst({
         where: {
           user_id: user_id,
           bookquiz_id: bookquiz_id,
@@ -214,11 +214,11 @@ class HistoryQuiz implements IHistoryQuizDao {
         include: { user: true, bookquiz: true },
       });
 
-      return historyQuiz;
+      return historyQuiz ? [historyQuiz] : [];
     } catch (error: any) {
       throw new StandardError({
         success: false,
-        message: "Error getting history quiz by book quiz ID",
+        message: "Error getting history quiz by book quiz ID and user ID",
         status: 500,
       });
     }

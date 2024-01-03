@@ -184,6 +184,32 @@ async function deleteHistoryQuizById(
   } catch (error: any) {
     next(error);
   }
+};
+
+async function getHistoryQuizByUserIdAndBookQuizId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const historyQuizDao = new HistoryQuizDao(db);
+  const historyQuizService = new HistoryQuizService(historyQuizDao);
+  try {
+    const { user_id, bookquiz_id } = req.params as any;
+    const result = await historyQuizService.getHistoryQuizByUserIdAndBookQuizId(
+      user_id,
+      bookquiz_id
+    );
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully get a historyQuiz",
+        data: result.message,
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
 }
 
 async function calculateTotalScoreForUserInBookQuiz(
@@ -226,7 +252,6 @@ async function calculateTotalScoreForUserInAllBookQuiz(
 
   try {
     const { user_id } = req.params as any;
-    console.log(req.params)
     const result =
       await historyQuizService.calculateTotalScoreForUserInAllBookQuiz(user_id);
     if (result.success) {
@@ -251,4 +276,5 @@ export {
   deleteHistoryQuizById,
   calculateTotalScoreForUserInBookQuiz,
   calculateTotalScoreForUserInAllBookQuiz,
+  getHistoryQuizByUserIdAndBookQuizId,
 };

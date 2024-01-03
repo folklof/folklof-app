@@ -8,6 +8,7 @@ import {
   deleteHistoryQuizById,
   calculateTotalScoreForUserInBookQuiz,
   calculateTotalScoreForUserInAllBookQuiz,
+  getHistoryQuizByUserIdAndBookQuizId,
 } from "../controller/historyQuizController";
 import { Router } from "express";
 
@@ -16,10 +17,14 @@ const router = Router();
 router.get("/", getAllHistoryQuizzes);
 router.get("/:id", getHistoryQuizById);
 router.get("/user/:user_id", getHistoryQuizByUserId);
-router.get("/book/:book_id", getHistoryQuizByBookQuizId);
+router.get("/book/:bookquiz_id", getHistoryQuizByBookQuizId);
 router.get(
-  "/user/:user_id/book/:bookquiz_id/total",
+  "/user/:user_id/bookquiz/:bookquiz_id/total",
   calculateTotalScoreForUserInBookQuiz
+);
+router.get(
+  "/bookquiz/:bookquiz_id/user/:user_id",
+  getHistoryQuizByUserIdAndBookQuizId
 );
 router.get("/user/:user_id/total", calculateTotalScoreForUserInAllBookQuiz);
 router.post("/", createHistoryQuiz);
