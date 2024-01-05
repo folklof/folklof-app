@@ -151,7 +151,7 @@ class HistoryQuizService implements IHistoryQuizService {
         });
       }
 
-      if (checkHistoryQuiz && checkHistoryQuiz[0].scores === 1) {
+      if (checkHistoryQuiz && checkHistoryQuiz.length > 0) {
         throw new StandardError({
           success: false,
           message:
