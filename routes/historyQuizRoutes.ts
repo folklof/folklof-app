@@ -9,6 +9,7 @@ import {
   calculateTotalScoreForUserInBookQuiz,
   calculateTotalScoreForUserInAllBookQuiz,
   getHistoryQuizByUserIdAndBookQuizId,
+  getAttemptQuizByUserIdAndBookQuizId,
 } from "../controller/historyQuizController";
 import { Router } from "express";
 
@@ -22,6 +23,7 @@ router.get(
   "/user/:user_id/bookquiz/:bookquiz_id/total",
   calculateTotalScoreForUserInBookQuiz
 );
+router.get("/attempt/quiz/user/:user_id/bookquiz/:bookquiz_id", getAttemptQuizByUserIdAndBookQuizId)
 router.get(
   "/bookquiz/:bookquiz_id/user/:user_id",
   getHistoryQuizByUserIdAndBookQuizId

@@ -120,7 +120,8 @@ class HistoryQuiz implements IHistoryQuizDao {
   async createHistoryQuiz(
     user_id: string,
     bookquiz_id: string,
-    scores: number
+    scores: number,
+    attempt_failed: number
   ): Promise<IHistoryQuizAttributes | undefined> {
     try {
       const historyQuiz = await this.db.historyQuiz.create({
@@ -128,6 +129,7 @@ class HistoryQuiz implements IHistoryQuizDao {
           user_id,
           bookquiz_id,
           scores,
+          attempt_failed,
         },
       });
 

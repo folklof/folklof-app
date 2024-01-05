@@ -288,10 +288,7 @@ export interface IReviewService {
   getReviewById(id: string): Promise<any>;
   getBookRatingAverage(book_id: string): Promise<any>;
   getReviewByBookId(book_id: string): Promise<any>;
-  getMostPopularBook(
-    limit: number,
-    page: number
-  ): Promise<any>;
+  getMostPopularBook(limit: number, page: number): Promise<any>;
   deleteReviewById(id: string, user_id: string): Promise<any>;
 }
 
@@ -365,7 +362,8 @@ export interface IHistoryQuizAttributes {
   id?: string | null;
   user_id?: string | null;
   book_id?: string | null;
-  score?: number | null;
+  scores?: number | null;
+  attempt_failed?: number | null;
   created_date?: Date | null;
 }
 
@@ -373,7 +371,8 @@ export interface IHistoryQuizDao {
   createHistoryQuiz(
     user_id: string,
     book_id: string,
-    score: number
+    score: number,
+    attempt_failed: number
   ): Promise<IHistoryQuizAttributes | any>;
   getAllHistoryQuizzes(): Promise<IHistoryQuizAttributes[] | undefined>;
   getHistoryQuizById(id: string): Promise<IHistoryQuizAttributes[] | undefined>;
@@ -402,7 +401,8 @@ export interface IHistoryQuizService {
   createHistoryQuiz(
     user_id: string,
     book_id: string,
-    score: number
+    score: number,
+    attempt_failed: number
   ): Promise<any>;
   getAllHistoryQuizzes(): Promise<any>;
   getHistoryQuizById(id: string): Promise<any>;

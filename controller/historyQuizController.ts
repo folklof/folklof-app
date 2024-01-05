@@ -116,16 +116,44 @@ async function createHistoryQuiz(
   const historyQuizService = new HistoryQuizService(historyQuizDao);
 
   try {
-    const { user_id, bookquiz_id, scores } = req.body;
+    const { user_id, bookquiz_id, scores, attempt_failed } = req.body;
     const result = await historyQuizService.createHistoryQuiz(
       user_id,
       bookquiz_id,
-      scores
+      scores,
+      attempt_failed
     );
     if (result.success) {
       return res.status(200).json({
         success: true,
         message: "Successfully create a historyQuiz",
+        data: result.message,
+      });
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function getAttemptQuizByUserIdAndBookQuizId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { db } = req as any;
+  const historyQuizDao = new HistoryQuizDao(db);
+  const historyQuizService = new HistoryQuizService(historyQuizDao);
+
+  try {
+    const { user_id, bookquiz_id } = req.params as any;
+    const result = await historyQuizService.getAttemptQuizByUserIdAndBookQuizId(
+      user_id,
+      bookquiz_id
+    );
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: "Successfully get attempt book quiz by user id & bookquiz id",
         data: result.message,
       });
     }
@@ -184,7 +212,7 @@ async function deleteHistoryQuizById(
   } catch (error: any) {
     next(error);
   }
-};
+}
 
 async function getHistoryQuizByUserIdAndBookQuizId(
   req: Request,
@@ -277,4 +305,5 @@ export {
   calculateTotalScoreForUserInBookQuiz,
   calculateTotalScoreForUserInAllBookQuiz,
   getHistoryQuizByUserIdAndBookQuizId,
+  getAttemptQuizByUserIdAndBookQuizId,
 };
