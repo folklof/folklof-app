@@ -359,7 +359,7 @@ export interface IBookQuizService {
 }
 
 export interface IHistoryQuizAttributes {
-  id?: string | null;
+  ID?: string | null;
   user_id?: string | null;
   book_id?: string | null;
   scores?: number | null;
@@ -381,6 +381,11 @@ export interface IHistoryQuizDao {
     bookquiz_id: string
   ): Promise<IHistoryQuizAttributes[] | undefined>;
   getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  updateAttemptHistoryQuizById(
+    id: string,
+    scores: number,
+    attempt_failed: number
+  ): Promise<IHistoryQuizAttributes | undefined>;
   getHistoryQuizByUserIdAndBookQuizId(
     bookquiz_id: string,
     user_id: string

@@ -144,6 +144,33 @@ class HistoryQuiz implements IHistoryQuizDao {
     }
   }
 
+  async updateAttemptHistoryQuizById(
+    id: string,
+    scores: number,
+    attempt_failed: number
+  ): Promise<IHistoryQuizAttributes | undefined> {
+    try {
+      const historyQuiz = await this.db.historyQuiz.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          scores,
+          attempt_failed,
+        },
+      });
+
+      return historyQuiz;
+    } catch (error: any) {
+      console.log(error, "Error updating history quiz by ID");
+      throw new StandardError({
+        success: false,
+        message: "Error updating history quiz by ID",
+        status: 500,
+      });
+    }
+  }
+
   async deleteHistoryQuizById(id: string): Promise<IHistoryQuizAttributes> {
     try {
       const historyQuiz = await this.db.historyQuiz.delete({

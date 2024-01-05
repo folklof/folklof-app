@@ -129,6 +129,12 @@ class HistoryQuizService implements IHistoryQuizService {
       );
       const getUser = await this.historyQuizDao.getUserById(user_id);
 
+      const checkHistoryQuiz =
+        await this.historyQuizDao.getHistoryQuizByUserIdAndBookQuizId(
+          user_id,
+          bookquiz_id
+        );
+
       if (!getBookQuiz || getBookQuiz.length === 0) {
         throw new StandardError({
           success: false,
@@ -143,6 +149,20 @@ class HistoryQuizService implements IHistoryQuizService {
           message: "No user found",
           status: 404,
         });
+      }
+
+      if (checkHistoryQuiz && checkHistoryQuiz.length > 0) {
+        const updateHistoryQuiz =
+          await this.historyQuizDao.updateAttemptHistoryQuizById(
+            checkHistoryQuiz[0].ID ?? '',
+            score,
+            attempt_failed
+          );
+        return {
+          success: true,
+          message: updateHistoryQuiz,
+          status: 200,
+        };
       }
 
       const historyQuiz = await this.historyQuizDao.createHistoryQuiz(
