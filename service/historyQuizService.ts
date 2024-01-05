@@ -129,12 +129,6 @@ class HistoryQuizService implements IHistoryQuizService {
       );
       const getUser = await this.historyQuizDao.getUserById(user_id);
 
-      const checkHistoryQuiz =
-        await this.historyQuizDao.getHistoryQuizByUserIdAndBookQuizId(
-          user_id,
-          bookquiz_id
-        );
-
       if (!getBookQuiz || getBookQuiz.length === 0) {
         throw new StandardError({
           success: false,
@@ -148,15 +142,6 @@ class HistoryQuizService implements IHistoryQuizService {
           success: false,
           message: "No user found",
           status: 404,
-        });
-      }
-
-      if (checkHistoryQuiz && checkHistoryQuiz.length > 0) {
-        throw new StandardError({
-          success: false,
-          message:
-            "You have already completed this quiz. Please try another one !",
-          status: 409,
         });
       }
 
