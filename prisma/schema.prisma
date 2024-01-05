@@ -123,13 +123,14 @@ model BookQuiz {
 
 // HistoryQuiz model
 model HistoryQuiz {
-  ID            String    @id @default(uuid())
-  bookquiz_id   String
-  user_id       String?
-  scores        Int?
-  user          User?      @relation(fields: [user_id], references: [ID])
-  bookquiz      BookQuiz?  @relation(fields: [bookquiz_id], references: [ID])
-  created_date  DateTime?  @default(now())
+  ID              String    @id @default(uuid())
+  bookquiz_id     String
+  user_id         String?
+  scores          Int?
+  attempt_failed  Int?
+  user            User?      @relation(fields: [user_id], references: [ID])
+  bookquiz        BookQuiz?  @relation(fields: [bookquiz_id], references: [ID])
+  created_date    DateTime?  @default(now())
 }
 
 // Review model
