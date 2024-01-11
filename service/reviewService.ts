@@ -213,7 +213,7 @@ class ReviewService implements IReviewService {
     try {
       const result = await this.reviewDao.getBookRatingAverage(book_id);
 
-      if (!result || result.length === 0) {
+      if (!result) {
         throw new StandardError({
           success: false,
           message: "Error getting average rating",

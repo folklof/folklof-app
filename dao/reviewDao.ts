@@ -201,7 +201,7 @@ class ReviewDao implements IReviewDao {
 
   async getBookRatingAverage(
     book_id: string
-  ): Promise<{ average: number; ratings: IReviewAttributes[] } | any> {
+  ): Promise<{ avgRating: number; totalBookReviews: number }> {
     try {
       const result = await this.db.review.aggregate({
         _avg: {
@@ -215,8 +215,6 @@ class ReviewDao implements IReviewDao {
         },
       });
 
-      console.log(result, "result");
-
       const totalBookReviews = await this.db.review.count({
         where: {
           book_id,
@@ -226,17 +224,15 @@ class ReviewDao implements IReviewDao {
         },
       });
 
-      if (result && totalBookReviews) {
-        return {
-          avgRating: result._avg.rating,
-          totalBookReviews,
-        };
-      } else {
-        return {
-          avgRating: 0,
-          totalBookReviews: 0,
-        };
-      }
+      const avgRating =
+        result?._avg?.rating !== null
+          ? parseFloat(result._avg.rating.toFixed(1))
+          : 0.0;
+
+      return {
+        avgRating,
+        totalBookReviews: totalBookReviews || 0,
+      };
     } catch (error: any) {
       console.log(error, "Error getting average rating");
       throw new StandardError({
