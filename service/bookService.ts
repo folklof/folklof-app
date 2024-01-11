@@ -269,7 +269,7 @@ class BookService implements IBookService {
     category_id: string
   ) {
     try {
-      const books = await this.bookDao.getAllBooks(
+      const { books, total } = await this.bookDao.getAllBooks(
         page,
         limit,
         sort,
@@ -287,7 +287,10 @@ class BookService implements IBookService {
 
       return {
         success: true,
-        message: books,
+        message: {
+          books,
+          total
+        },
         status: 200,
       };
     } catch (error: any) {

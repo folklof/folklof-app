@@ -59,8 +59,8 @@ class BookDao implements IBookDao {
     limit?: number,
     sort?: number,
     agegroup_id?: string,
-    category_id?: string,
-  ): Promise<IBookAttributes[] | undefined> {
+    category_id?: string
+  ): Promise<any> {
     const convertPage = Number(page) || 1;
     const convertLimit = Number(limit) || 25;
     const converSort = Number(sort) || 2;
@@ -77,20 +77,26 @@ class BookDao implements IBookDao {
         whereClause.agegroup_id = agegroup_id;
       }
 
-      const books = await this.db.book.findMany({
-        skip: (convertPage - 1) * convertLimit,
-        take: convertLimit,
-        orderBy: {
-          created_date: sortOptions,
-        },
-        where: whereClause,
-        include: {
-          category: true,
-          agegroup: true,
-          user: true
-        },
-      });
-      return books;
+      const [books, total] = await Promise.all([
+        this.db.book.findMany({
+          skip: (convertPage - 1) * convertLimit,
+          take: convertLimit,
+          orderBy: {
+            created_date: sortOptions,
+          },
+          where: whereClause,
+          include: {
+            category: true,
+            agegroup: true,
+            user: true,
+          },
+        }),
+        this.db.book.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return { books, total };
     } catch (error: any) {
       console.log(error, "Error retrieving all books");
       throw new StandardError({

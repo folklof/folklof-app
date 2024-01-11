@@ -24,7 +24,8 @@ async function getAllBooks(req: Request, res: Response, next: NextFunction) {
       return res.status(200).json({
         success: true,
         message: "Successfully get all books",
-        data: result.message,
+        data: result.message.books,
+        totalBook: result.message.total,
       });
     } else {
       return res.status(404).json({

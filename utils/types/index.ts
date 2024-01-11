@@ -141,7 +141,7 @@ export interface IBookDao {
     sort: number,
     agegroup_id?: string,
     category_id?: string
-  ): Promise<IBookAttributes[] | undefined>;
+  ): Promise<any>;
   getBookById(id: string): Promise<IBookAttributes[] | undefined>;
   getBookByCode(book_code: string): Promise<IBookAttributes[] | undefined>;
   getBookByTitle(title: string): Promise<IBookAttributes[] | undefined>;
