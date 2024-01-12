@@ -201,7 +201,7 @@ class ReviewDao implements IReviewDao {
 
   async getBookRatingAverage(
     book_id: string
-  ): Promise<{ avgRating: number; totalBookReviews: number }> {
+  ): Promise<{ avgRating: string; totalBookReviews: number }> {
     try {
       const result = await this.db.review.aggregate({
         _avg: {
@@ -226,8 +226,8 @@ class ReviewDao implements IReviewDao {
 
       const avgRating =
         result?._avg?.rating !== null
-          ? parseFloat(result._avg.rating.toFixed(1))
-          : 0.0;
+          ? result._avg.rating.toFixed(1)
+          : "0.0";
 
       return {
         avgRating,

@@ -257,7 +257,7 @@ export interface IReviewDao {
   getBookById(id: string): Promise<IBookAttributes[] | undefined>;
   getBookRatingAverage(
     book_id: string
-  ): Promise<{ avgRating: number; totalBookReviews: number }>;
+  ): Promise<{ avgRating: string; totalBookReviews: number }>;
   getReviewByBookId(book_id: string): Promise<IReviewAttributes[] | undefined>;
   getMostPopularBook(
     limit: number,
