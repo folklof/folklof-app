@@ -236,6 +236,7 @@ class BookDao implements IBookDao {
         include: {
           category: true,
           agegroup: true,
+          user: true
         },
       });
 
