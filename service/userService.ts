@@ -1,5 +1,6 @@
 import StandardError from "../utils/constants/standardError";
 import { IUserService, IUserDao } from "../utils/types";
+import { S3_AWS, S3_BUCKET } from "../utils/config/awsConfig";
 
 class UserService implements IUserService {
   private userDao: IUserDao;
@@ -145,6 +146,32 @@ class UserService implements IUserService {
       };
     } catch (error: any) {
       return new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async uploadImageToS3(image_file: any) {
+    try {
+      const uploadParams: any = {
+        Bucket: S3_BUCKET,
+        Key: `profile/${image_file.originalname}`,
+        Body: image_file.buffer,
+        ACL: "public-read",
+      };
+
+      const uploadResult = await S3_AWS.upload(uploadParams).promise();
+
+      return {
+        success: true,
+        message: uploadResult.Location,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error uploading image to S3");
+      throw new StandardError({
         success: false,
         message: error.message,
         status: error.status,
