@@ -113,6 +113,11 @@ class BookDao implements IBookDao {
         where: {
           ID: id,
         },
+        include: {
+          category: true,
+          agegroup: true,
+          user: true,
+        },
       });
 
       return book;
@@ -236,7 +241,7 @@ class BookDao implements IBookDao {
         include: {
           category: true,
           agegroup: true,
-          user: true
+          user: true,
         },
       });
 
