@@ -16,6 +16,6 @@ router.get("/:id", getUserById);
 router.get("/", getAllUsers);
 router.put("/:id", updateUserById);
 router.put("/admin/:id", updateUserForAdminById);
-router.post("/profile/image/upload", uploadImageToS3);
+router.post("/profile/image/:id", uploadImageToS3);
 
 export default router;

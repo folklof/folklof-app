@@ -100,7 +100,7 @@ async function uploadImageToS3(
 
       try {
         const imageFile = req.file;
-        const { id } = req.body as any;
+        const { id } = req.params as any;
         const result = await userService.uploadImageToS3(imageFile, id);
         if (result.success) {
           return res.status(200).json({
