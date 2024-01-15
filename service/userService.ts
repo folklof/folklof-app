@@ -157,7 +157,7 @@ class UserService implements IUserService {
     try {
       const uploadParams: any = {
         Bucket: S3_BUCKET,
-        Key: `profile/${id}`,
+        Key: `profile/${id}.jgp`,
         Body: image_file.buffer,
         ACL: "public-read",
       };
