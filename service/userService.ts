@@ -153,11 +153,11 @@ class UserService implements IUserService {
     }
   }
 
-  async uploadImageToS3(image_file: any) {
+  async uploadImageToS3(image_file: any, id: string) {
     try {
       const uploadParams: any = {
         Bucket: S3_BUCKET,
-        Key: `profile/${image_file.originalname}`,
+        Key: `profile/${id}`,
         Body: image_file.buffer,
         ACL: "public-read",
       };
