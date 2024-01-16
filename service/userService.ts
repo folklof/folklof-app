@@ -154,10 +154,12 @@ class UserService implements IUserService {
   }
 
   async uploadImageToS3(image_file: any, id: string) {
+    const specialCode = `HAN-${Math.floor(Math.random() * 1000)}`;
+
     try {
       const uploadParams: any = {
         Bucket: S3_BUCKET,
-        Key: `profile/${id}.jpg`,
+        Key: `profile/${id}-${specialCode}.jpg`,
         Body: image_file.buffer,
         ACL: "public-read",
       };
