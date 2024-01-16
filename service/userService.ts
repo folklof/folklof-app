@@ -1,6 +1,11 @@
+import moment from "moment";
+import NodeCache from "node-cache";
 import StandardError from "../utils/constants/standardError";
 import { IUserService, IUserDao } from "../utils/types";
 import { S3_AWS, S3_BUCKET } from "../utils/config/awsConfig";
+
+const MAX_UPLOADS_PER_DAY = 3;
+const userUploadCache = new NodeCache();
 
 class UserService implements IUserService {
   private userDao: IUserDao;
@@ -157,6 +162,27 @@ class UserService implements IUserService {
     const specialCode = `HAN-${Math.floor(Math.random() * 1000)}`;
 
     try {
+      const uploadCountKey = `uploadCount:${id}`;
+      const lastUploadTimestampKey = `lastUploadTimestamp:${id}`;
+
+      let uploadCount: number = userUploadCache.get(uploadCountKey) || 0;
+      let lastUploadTimestamp: number =
+        userUploadCache.get(lastUploadTimestampKey) || 0;
+
+      const todayStart = moment().startOf("day").unix();
+
+      if (lastUploadTimestamp < todayStart) {
+        uploadCount = 1;
+      } else if (uploadCount >= MAX_UPLOADS_PER_DAY) {
+        throw new Error("Exceeded maximum daily upload limit");
+      } else {
+        uploadCount++;
+      }
+
+      // Update the cache
+      userUploadCache.set(uploadCountKey, uploadCount);
+      userUploadCache.set(lastUploadTimestampKey, moment().unix());
+
       const uploadParams: any = {
         Bucket: S3_BUCKET,
         Key: `profile/${id}-${specialCode}.jpg`,
