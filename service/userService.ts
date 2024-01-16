@@ -174,7 +174,11 @@ class UserService implements IUserService {
       if (lastUploadTimestamp < todayStart) {
         uploadCount = 1;
       } else if (uploadCount >= MAX_UPLOADS_PER_DAY) {
-        throw new Error("Exceeded maximum daily upload limit");
+        throw new StandardError({
+          success: false,
+          message: "Exceeded maximum daily upload limit. Please try again later tomorrow",
+          status: 400,
+        });
       } else {
         uploadCount++;
       }
