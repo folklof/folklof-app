@@ -70,7 +70,7 @@ class HistoryQuizService implements IHistoryQuizService {
       if (!historyQuiz || historyQuiz.length === 0) {
         throw new StandardError({
           success: false,
-          message: "No history quiz found",
+          message: "No history quiz found by user id",
           status: 404,
         });
       }
@@ -98,7 +98,7 @@ class HistoryQuizService implements IHistoryQuizService {
       if (!historyQuiz || historyQuiz.length === 0) {
         throw new StandardError({
           success: false,
-          message: "No history quiz found",
+          message: "No history quiz found by book quiz id",
           status: 404,
         });
       }
@@ -119,12 +119,21 @@ class HistoryQuizService implements IHistoryQuizService {
 
   async createHistoryQuiz(
     user_id: string,
-    book_id: string,
-    score: number
+    bookquiz_id: string,
+    score: number,
+    attempt_failed: number
   ): Promise<any> {
     try {
-      const getBookQuiz = await this.historyQuizDao.getBookQuizById(book_id);
+      const getBookQuiz = await this.historyQuizDao.getBookQuizById(
+        bookquiz_id
+      );
       const getUser = await this.historyQuizDao.getUserById(user_id);
+
+      const checkHistoryQuiz =
+        await this.historyQuizDao.getHistoryQuizByUserIdAndBookQuizId(
+          user_id,
+          bookquiz_id
+        );
 
       if (!getBookQuiz || getBookQuiz.length === 0) {
         throw new StandardError({
@@ -142,10 +151,25 @@ class HistoryQuizService implements IHistoryQuizService {
         });
       }
 
+      if (checkHistoryQuiz && checkHistoryQuiz.length > 0) {
+        const updateHistoryQuiz =
+          await this.historyQuizDao.updateAttemptHistoryQuizById(
+            checkHistoryQuiz[0].ID ?? '',
+            score,
+            attempt_failed
+          );
+        return {
+          success: true,
+          message: updateHistoryQuiz,
+          status: 200,
+        };
+      }
+
       const historyQuiz = await this.historyQuizDao.createHistoryQuiz(
         user_id,
-        book_id,
-        score
+        bookquiz_id,
+        score,
+        attempt_failed
       );
 
       return {
@@ -168,7 +192,7 @@ class HistoryQuizService implements IHistoryQuizService {
       if (!historyQuiz) {
         throw new StandardError({
           success: false,
-          message: "No history quiz found",
+          message: "No history quiz found by quiz id",
           status: 404,
         });
       }
@@ -198,7 +222,7 @@ class HistoryQuizService implements IHistoryQuizService {
       if (!historyQuiz) {
         throw new StandardError({
           success: false,
-          message: "No history quiz found",
+          message: "No history quiz found by quiz id",
           status: 404,
         });
       }
@@ -221,9 +245,84 @@ class HistoryQuizService implements IHistoryQuizService {
     }
   }
 
+  async getAttemptQuizByUserIdAndBookQuizId(
+    user_id: string,
+    bookquiz_id: string
+  ) {
+    try {
+      const checkUserQuiz = await this.historyQuizDao.getUserById(user_id);
+      const checkBookQuiz = await this.historyQuizDao.getBookQuizById(
+        bookquiz_id
+      );
+
+      if (!checkBookQuiz || checkBookQuiz.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "No book quiz found",
+          status: 404,
+        });
+      }
+
+      if (!checkUserQuiz || checkUserQuiz.length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "No user found",
+          status: 404,
+        });
+      }
+
+      const historyQuiz =
+        await this.historyQuizDao.getHistoryQuizByUserIdAndBookQuizId(
+          user_id,
+          bookquiz_id
+        );
+
+      if (!historyQuiz || historyQuiz.length === 0) {
+        return {
+          success: true,
+          message: { attempt_quiz_failed: 0, isAllowed: true },
+          status: 200,
+        };
+      }
+
+      if (historyQuiz[0].attempt_failed === 2) {
+        throw new StandardError({
+          success: false,
+          message:
+            "You have reached the maximum attempt quiz. Please try again later !",
+          status: 400,
+        });
+      }
+
+      if (historyQuiz[0].scores === 1) {
+        throw new StandardError({
+          success: false,
+          message:
+            "You have already completed this quiz. Please try another one !",
+          status: 409,
+        });
+      }
+
+      return {
+        success: true,
+        message: {
+          attempt_quiz_failed: historyQuiz[0].attempt_failed,
+          isAllowed: true,
+        },
+        status: 200,
+      };
+    } catch (error: any) {
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
   async getHistoryQuizByUserIdAndBookQuizId(
-    bookquiz_id: string,
-    user_id: string
+    user_id: string,
+    bookquiz_id: string
   ) {
     try {
       const historyQuiz =
@@ -235,7 +334,7 @@ class HistoryQuizService implements IHistoryQuizService {
       if (!historyQuiz || historyQuiz.length === 0) {
         throw new StandardError({
           success: false,
-          message: "No history quiz found",
+          message: "No history quiz found by user id and book quiz id",
           status: 404,
         });
       }

@@ -120,7 +120,8 @@ class HistoryQuiz implements IHistoryQuizDao {
   async createHistoryQuiz(
     user_id: string,
     bookquiz_id: string,
-    scores: number
+    scores: number,
+    attempt_failed: number
   ): Promise<IHistoryQuizAttributes | undefined> {
     try {
       const historyQuiz = await this.db.historyQuiz.create({
@@ -128,6 +129,7 @@ class HistoryQuiz implements IHistoryQuizDao {
           user_id,
           bookquiz_id,
           scores,
+          attempt_failed,
         },
       });
 
@@ -137,6 +139,33 @@ class HistoryQuiz implements IHistoryQuizDao {
       throw new StandardError({
         success: false,
         message: "Error creating history quiz",
+        status: 500,
+      });
+    }
+  }
+
+  async updateAttemptHistoryQuizById(
+    id: string,
+    scores: number,
+    attempt_failed: number
+  ): Promise<IHistoryQuizAttributes | undefined> {
+    try {
+      const historyQuiz = await this.db.historyQuiz.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          scores,
+          attempt_failed,
+        },
+      });
+
+      return historyQuiz;
+    } catch (error: any) {
+      console.log(error, "Error updating history quiz by ID");
+      throw new StandardError({
+        success: false,
+        message: "Error updating history quiz by ID",
         status: 500,
       });
     }
@@ -206,7 +235,7 @@ class HistoryQuiz implements IHistoryQuizDao {
     bookquiz_id: string
   ): Promise<IHistoryQuizAttributes[] | undefined> {
     try {
-      const historyQuiz = await this.db.historyQuiz.findMany({
+      const historyQuiz = await this.db.historyQuiz.findFirst({
         where: {
           user_id: user_id,
           bookquiz_id: bookquiz_id,
@@ -214,11 +243,11 @@ class HistoryQuiz implements IHistoryQuizDao {
         include: { user: true, bookquiz: true },
       });
 
-      return historyQuiz;
+      return historyQuiz ? [historyQuiz] : [];
     } catch (error: any) {
       throw new StandardError({
         success: false,
-        message: "Error getting history quiz by book quiz ID",
+        message: "Error getting history quiz by book quiz ID and user ID",
         status: 500,
       });
     }

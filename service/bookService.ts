@@ -15,6 +15,7 @@ class BookService implements IBookService {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
@@ -55,6 +56,7 @@ class BookService implements IBookService {
         title,
         category_id,
         agegroup_id,
+        user_id,
         desc,
         duration,
         audio_link,
@@ -267,7 +269,7 @@ class BookService implements IBookService {
     category_id: string
   ) {
     try {
-      const books = await this.bookDao.getAllBooks(
+      const { books, total } = await this.bookDao.getAllBooks(
         page,
         limit,
         sort,
@@ -285,7 +287,10 @@ class BookService implements IBookService {
 
       return {
         success: true,
-        message: books,
+        message: {
+          books,
+          total
+        },
         status: 200,
       };
     } catch (error: any) {
@@ -330,6 +335,7 @@ class BookService implements IBookService {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -371,6 +377,7 @@ class BookService implements IBookService {
         title,
         category_id,
         agegroup_id,
+        user_id,
         desc,
         duration,
         audio_link,

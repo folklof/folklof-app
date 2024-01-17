@@ -4,6 +4,8 @@ import {
   getUserProfile,
   getAllUsers,
   updateUserById,
+  updateUserForAdminById,
+  uploadImageToS3,
 } from "../controller/userController";
 import { isAuthenticatedGoogle } from "../middleware/authMiddleware";
 
@@ -13,5 +15,7 @@ router.get("/profile", isAuthenticatedGoogle, getUserProfile);
 router.get("/:id", getUserById);
 router.get("/", getAllUsers);
 router.put("/:id", updateUserById);
+router.put("/admin/:id", updateUserForAdminById);
+router.post("/profile/image/:id", uploadImageToS3);
 
 export default router;

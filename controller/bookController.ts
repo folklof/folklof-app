@@ -24,7 +24,8 @@ async function getAllBooks(req: Request, res: Response, next: NextFunction) {
       return res.status(200).json({
         success: true,
         message: "Successfully get all books",
-        data: result.message,
+        data: result.message.books,
+        totalBook: result.message.total,
       });
     } else {
       return res.status(404).json({
@@ -47,6 +48,7 @@ async function createBook(req: Request, res: Response, next: NextFunction) {
       title,
       category_id,
       agegroup_id,
+      user_id,
       desc,
       duration,
       audio_link,
@@ -56,6 +58,7 @@ async function createBook(req: Request, res: Response, next: NextFunction) {
       title,
       category_id,
       agegroup_id,
+      user_id,
       desc,
       duration,
       audio_link,
@@ -275,9 +278,7 @@ async function uploadImageToS3(
         console.log(imageFile, "file");
         console.log(imageFile.originalname, "title_book");
 
-        const result = await bookService.uploadImageToS3(
-          imageFile,
-        );
+        const result = await bookService.uploadImageToS3(imageFile);
         if (result.success) {
           return res.status(200).json({
             success: true,
@@ -381,6 +382,7 @@ async function updateBook(req: Request, res: Response, next: NextFunction) {
       title,
       category_id,
       agegroup_id,
+      user_id,
       desc,
       duration,
       audio_link,
@@ -391,6 +393,7 @@ async function updateBook(req: Request, res: Response, next: NextFunction) {
       title,
       category_id,
       agegroup_id,
+      user_id,
       duration,
       desc,
       audio_link,

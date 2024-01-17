@@ -1,5 +1,11 @@
+import moment from "moment";
+import NodeCache from "node-cache";
 import StandardError from "../utils/constants/standardError";
 import { IUserService, IUserDao } from "../utils/types";
+import { S3_AWS, S3_BUCKET } from "../utils/config/awsConfig";
+
+const MAX_UPLOADS_PER_DAY = 3;
+const userUploadCache = new NodeCache();
 
 class UserService implements IUserService {
   private userDao: IUserDao;
@@ -124,6 +130,99 @@ class UserService implements IUserService {
     try {
       const user = await this.userDao.updateUserById(
         id,
+        phone,
+        age,
+        name,
+        avatar
+      );
+
+      if (!user) {
+        throw new StandardError({
+          success: false,
+          message: "User not found",
+          status: 404,
+        });
+      }
+
+      return {
+        success: true,
+        message: user,
+        status: 200,
+      };
+    } catch (error: any) {
+      return new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async uploadImageToS3(image_file: any, id: string) {
+    const specialCode = `HAN-${Math.floor(Math.random() * 1000)}`;
+
+    try {
+      const uploadCountKey = `uploadCount:${id}`;
+      const lastUploadTimestampKey = `lastUploadTimestamp:${id}`;
+
+      let uploadCount: number = userUploadCache.get(uploadCountKey) || 0;
+      let lastUploadTimestamp: number =
+        userUploadCache.get(lastUploadTimestampKey) || 0;
+
+      const todayStart = moment().startOf("day").unix();
+
+      if (lastUploadTimestamp < todayStart) {
+        uploadCount = 1;
+      } else if (uploadCount >= MAX_UPLOADS_PER_DAY) {
+        throw new StandardError({
+          success: false,
+          message: "Exceeded maximum daily upload limit. Please try again later tomorrow",
+          status: 400,
+        });
+      } else {
+        uploadCount++;
+      }
+
+      // Update the cache
+      userUploadCache.set(uploadCountKey, uploadCount);
+      userUploadCache.set(lastUploadTimestampKey, moment().unix());
+
+      const uploadParams: any = {
+        Bucket: S3_BUCKET,
+        Key: `profile/${id}-${specialCode}.jpg`,
+        Body: image_file.buffer,
+        ACL: "public-read",
+      };
+
+      const uploadResult = await S3_AWS.upload(uploadParams).promise();
+
+      return {
+        success: true,
+        message: uploadResult.Location,
+        status: 200,
+      };
+    } catch (error: any) {
+      console.log(error, "Error uploading image to S3");
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async updateUserForAdminById(
+    id: string,
+    role_id: number,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ) {
+    try {
+      const user = await this.userDao.updateUserForAdminById(
+        id,
+        role_id,
         phone,
         age,
         name,

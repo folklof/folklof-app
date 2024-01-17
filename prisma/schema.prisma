@@ -6,26 +6,28 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DB_URL_PROD")
+  url      = env("DB_URL_DEV")
 }
 
 // User model
 model User {
-  ID          String    @id @default(uuid())
-  role_id     Int
-  username    String?
-  email       String?
-  phone       String?
-  age         Int?
-  avatar      String?
-  created_date DateTime?  @default(now())
-  role        Role?      @relation(fields: [role_id], references: [ID])
+  ID            String    @id @default(uuid())
+  role_id       Int
+  username      String?
+  email         String?
+  phone         String?
+  age           Int?
+  avatar        String?
+  created_date  DateTime?  @default(now())
+  role          Role?      @relation(fields: [role_id], references: [ID])
   
   // Relations
-  favourites  Favourite[]
-  libraries   Library[]
-  histories   HistoryQuiz[]
-  reviews     Review[]
+  favourites    Favourite[]
+  libraries     Library[]
+  histories     HistoryQuiz[]
+  reviews       Review[]
+  books         Book[]
+  requestbooks  RequestBook[]
 }
 
 // Role model
@@ -64,6 +66,7 @@ model Book {
   ID           String    @id @default(uuid())
   category_id  String
   agegroup_id  String
+  user_id      String
   book_code    String?
   title        String?
   desc         String?   @db.LongText
@@ -73,6 +76,7 @@ model Book {
   created_date DateTime?  @default(now())
   category     Category?  @relation(fields: [category_id], references: [ID])
   agegroup     AgeGroup?  @relation(fields: [agegroup_id], references: [ID])
+  user         User?      @relation(fields: [user_id], references: [ID])
   
   // Relations
   favourites   Favourite[]
@@ -119,13 +123,14 @@ model BookQuiz {
 
 // HistoryQuiz model
 model HistoryQuiz {
-  ID            String    @id @default(uuid())
-  bookquiz_id   String
-  user_id       String?
-  scores        Int?
-  user          User?      @relation(fields: [user_id], references: [ID])
-  bookquiz      BookQuiz?  @relation(fields: [bookquiz_id], references: [ID])
-  created_date  DateTime?  @default(now())
+  ID              String    @id @default(uuid())
+  bookquiz_id     String
+  user_id         String?
+  scores          Int?
+  attempt_failed  Int?
+  user            User?      @relation(fields: [user_id], references: [ID])
+  bookquiz        BookQuiz?  @relation(fields: [bookquiz_id], references: [ID])
+  created_date    DateTime?  @default(now())
 }
 
 // Review model
@@ -139,4 +144,27 @@ model Review {
   created_date  DateTime?
   user          User?    @relation(fields: [user_id], references: [ID])
   book          Book?    @relation(fields: [book_id], references: [ID])
+}
+
+// Request Book model
+model RequestBook {
+  ID            String @id @default(uuid())
+  user_id       String
+  status_id     String
+  title         String?
+  desc          String? @db.LongText
+  cover_image   String?
+  created_date  DateTime?  @default(now())  
+  user          User? @relation(fields: [user_id], references: [ID])
+  status        StatusRequestBook? @relation(fields: [status_id], references: [ID])
+}
+
+// Status Request Book model
+model StatusRequestBook {
+  ID             String @id @default(uuid())
+  name           String?
+  desc           String? 
+
+  // Relations
+  RequestBooks  RequestBook[] 
 }

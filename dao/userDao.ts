@@ -120,14 +120,53 @@ class UserDao implements IUserDao {
           username: name,
           avatar: avatar,
         },
+        include: {
+          role: true
+        }
       });
 
       return user;
     } catch (error: any) {
-      console.log(error, "Error updating age");
+      console.log(error, "Error updating user");
       throw new StandardError({
         success: false,
-        message: "Error updating age",
+        message: "Error updating user",
+        status: 500,
+      });
+    }
+  }
+
+  async updateUserForAdminById(
+    id: string,
+    role_id: number,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any> {
+    try {
+      const user = await this.db.user.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          role_id: role_id,
+          age: age,
+          phone: phone,
+          username: name,
+          avatar: avatar,
+        },
+        include: {
+          role: true
+        }
+      });
+
+      return user;
+    } catch (error: any) {
+      console.log(error, "Error updating user for admin");
+      throw new StandardError({
+        success: false,
+        message: "Error updating user for admin",
         status: 500,
       });
     }

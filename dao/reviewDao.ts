@@ -88,8 +88,6 @@ class ReviewDao implements IReviewDao {
         });
       }
 
-      console.log("perbandingan", review.user_id, user_id);
-
       if (review.user_id !== user_id) {
         throw new StandardError({
           success: false,
@@ -201,7 +199,7 @@ class ReviewDao implements IReviewDao {
 
   async getBookRatingAverage(
     book_id: string
-  ): Promise<{ average: number; ratings: IReviewAttributes[] } | any> {
+  ): Promise<{ avgRating: string; totalBookReviews: number }> {
     try {
       const result = await this.db.review.aggregate({
         _avg: {
@@ -224,22 +222,85 @@ class ReviewDao implements IReviewDao {
         },
       });
 
-      if (result && totalBookReviews) {
-        return {
-          avgRating: result._avg.rating,
-          totalBookReviews,
-        };
-      } else {
-        return {
-          avgRating: 0,
-          totalBookReviews: 0,
-        };
-      }
+      const avgRating =
+        result?._avg?.rating !== null ? result._avg.rating.toFixed(1) : "0.0";
+
+      return {
+        avgRating,
+        totalBookReviews: totalBookReviews || 0,
+      };
     } catch (error: any) {
       console.log(error, "Error getting average rating");
       throw new StandardError({
         success: false,
         message: "Error getting average rating & total book reviews",
+        status: 500,
+      });
+    }
+  }
+
+  async getMostPopularBook(limit: number, page: number): Promise<any> {
+    const convertPage = Number(page) || 1;
+    const convertLimit = Number(limit) || 6;
+
+    try {
+      const bestStories = await this.db.review.groupBy({
+        by: ["book_id"],
+        _count: true,
+        _avg: {
+          rating: true,
+        },
+        orderBy: [
+          {
+            _count: {
+              book_id: "desc",
+            },
+          },
+          {
+            _avg: {
+              rating: "desc",
+            },
+          },
+        ],
+        take: convertLimit,
+        skip: (convertPage - 1) * convertLimit,
+      });
+
+      const formattedBestStories = await Promise.all(
+        bestStories.map(async (review) => {
+          const [book] = await Promise.all([
+            this.db.book.findUnique({
+              where: {
+                ID: review.book_id,
+              },
+              include: {
+                category: true,
+                agegroup: true,
+                user: true,
+              },
+            }),
+          ]);
+
+          const avgRating =
+            review._avg.rating !== null
+              ? review._avg.rating.toFixed(1).toString()
+              : null;
+
+          return {
+            book_id: review.book_id,
+            total_reviews: review._count,
+            avgRating,
+            book: book || null,
+          };
+        })
+      );
+
+      return formattedBestStories;
+    } catch (error) {
+      console.error("Error fetching best stories:", error);
+      throw new StandardError({
+        success: false,
+        message: "Error retrieving most popular book",
         status: 500,
       });
     }

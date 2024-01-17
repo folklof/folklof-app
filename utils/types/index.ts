@@ -46,6 +46,14 @@ export interface IUserDao {
     name: string,
     avatar: string
   ): Promise<IUserAttributes | any>;
+  updateUserForAdminById(
+    id: string,
+    role_id: number,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<IUserAttributes | any>;
 }
 
 export interface IUserService {
@@ -58,6 +66,14 @@ export interface IUserService {
   getUserById(id: string): Promise<any>;
   updateUserById(
     id: string,
+    phone: string,
+    age: number,
+    name: string,
+    avatar: string
+  ): Promise<any>;
+  updateUserForAdminById(
+    id: string,
+    role_id: number,
     phone: string,
     age: number,
     name: string,
@@ -98,6 +114,7 @@ export interface IBookAttributes {
   id?: string | null;
   category_id?: string | null;
   agegroup_id?: string | null;
+  user_id?: string | null;
   book_code?: string | null;
   title?: string | null;
   desc?: string | null;
@@ -112,6 +129,7 @@ export interface IBookDao {
     title: string,
     agegroup_id: string,
     category_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -123,7 +141,7 @@ export interface IBookDao {
     sort: number,
     agegroup_id?: string,
     category_id?: string
-  ): Promise<IBookAttributes[] | undefined>;
+  ): Promise<any>;
   getBookById(id: string): Promise<IBookAttributes[] | undefined>;
   getBookByCode(book_code: string): Promise<IBookAttributes[] | undefined>;
   getBookByTitle(title: string): Promise<IBookAttributes[] | undefined>;
@@ -137,6 +155,7 @@ export interface IBookDao {
     title: string,
     agegroup_id: string,
     category_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -152,6 +171,7 @@ export interface IBookService {
     title: string,
     agegroup_id: string,
     category_id: string,
+    user_id: string,
     duration: string,
     desc: string,
     audio_link: string,
@@ -175,6 +195,7 @@ export interface IBookService {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
@@ -236,8 +257,12 @@ export interface IReviewDao {
   getBookById(id: string): Promise<IBookAttributes[] | undefined>;
   getBookRatingAverage(
     book_id: string
-  ): Promise<IReviewAttributes[] | undefined>;
+  ): Promise<{ avgRating: string; totalBookReviews: number }>;
   getReviewByBookId(book_id: string): Promise<IReviewAttributes[] | undefined>;
+  getMostPopularBook(
+    limit: number,
+    page: number
+  ): Promise<IReviewAttributes[] | undefined>;
   updateReviewById(
     id: string,
     user_id: string,
@@ -263,6 +288,7 @@ export interface IReviewService {
   getReviewById(id: string): Promise<any>;
   getBookRatingAverage(book_id: string): Promise<any>;
   getReviewByBookId(book_id: string): Promise<any>;
+  getMostPopularBook(limit: number, page: number): Promise<any>;
   deleteReviewById(id: string, user_id: string): Promise<any>;
 }
 
@@ -333,10 +359,11 @@ export interface IBookQuizService {
 }
 
 export interface IHistoryQuizAttributes {
-  id?: string | null;
+  ID?: string | null;
   user_id?: string | null;
   book_id?: string | null;
-  score?: number | null;
+  scores?: number | null;
+  attempt_failed?: number | null;
   created_date?: Date | null;
 }
 
@@ -344,7 +371,8 @@ export interface IHistoryQuizDao {
   createHistoryQuiz(
     user_id: string,
     book_id: string,
-    score: number
+    score: number,
+    attempt_failed: number
   ): Promise<IHistoryQuizAttributes | any>;
   getAllHistoryQuizzes(): Promise<IHistoryQuizAttributes[] | undefined>;
   getHistoryQuizById(id: string): Promise<IHistoryQuizAttributes[] | undefined>;
@@ -353,6 +381,11 @@ export interface IHistoryQuizDao {
     bookquiz_id: string
   ): Promise<IHistoryQuizAttributes[] | undefined>;
   getUserById(user_id: string): Promise<IUserAttributes[] | undefined>;
+  updateAttemptHistoryQuizById(
+    id: string,
+    scores: number,
+    attempt_failed: number
+  ): Promise<IHistoryQuizAttributes | undefined>;
   getHistoryQuizByUserIdAndBookQuizId(
     bookquiz_id: string,
     user_id: string
@@ -373,7 +406,8 @@ export interface IHistoryQuizService {
   createHistoryQuiz(
     user_id: string,
     book_id: string,
-    score: number
+    score: number,
+    attempt_failed: number
   ): Promise<any>;
   getAllHistoryQuizzes(): Promise<any>;
   getHistoryQuizById(id: string): Promise<any>;
@@ -488,4 +522,93 @@ export interface IFavouriteService {
   getFavouriteByUserId(user_id: string): Promise<any>;
   updateIsAddedFavouriteById(id: string, is_added: boolean): Promise<any>;
   deleteFavouriteById(id: string): Promise<any>;
+}
+
+export interface IStatusRequestBookAttributes {
+  id?: string | null;
+  name?: string | null;
+  desc?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IStatusRequestBookDao {
+  getAllStatusRequestBooks(): Promise<
+    IStatusRequestBookAttributes[] | undefined
+  >;
+  createStatusRequestBook(
+    name: string,
+    desc: string
+  ): Promise<IStatusRequestBookAttributes[] | undefined>;
+  updateStatusRequestBook(
+    id: string,
+    name: string,
+    desc: string
+  ): Promise<IStatusRequestBookAttributes[] | undefined>;
+  deleteStatusRequestBook(
+    id: string
+  ): Promise<IStatusRequestBookAttributes[] | undefined>;
+}
+
+export interface IStatusRequestBookService {
+  getAllStatusRequestBooks(): Promise<any>;
+  createStatusRequestBook(name: string, desc: string): Promise<any>;
+  updateStatusRequestBook(id: string, name: string, desc: string): Promise<any>;
+  deleteStatusRequestBook(id: string): Promise<any>;
+}
+
+export interface IRequestBookAttributes {
+  id?: string | null;
+  user_id?: string | null;
+  status_id?: string | null;
+  title?: string | null;
+  desc?: string | null;
+  cover_image?: string | null;
+  created_date?: Date | null;
+}
+
+export interface IRequestBookDao {
+  getAllRequestBooks(): Promise<IRequestBookAttributes[] | undefined>;
+  getRequestBookById(id: string): Promise<IRequestBookAttributes[] | undefined>;
+  getRequestBookByUserId(
+    user_id: string
+  ): Promise<IRequestBookAttributes[] | undefined>;
+  createRequestBook(
+    user_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<IRequestBookAttributes[] | undefined>;
+  updateRequestBook(
+    id: string,
+    user_id: string,
+    status_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<IRequestBookAttributes[] | undefined>;
+  getUserById(user_id: string): Promise<IUserAttributes | undefined>;
+  getRequestBookByTitle(title: string): Promise<IRequestBookAttributes | any>;
+  deleteRequestBook(id: string): Promise<IRequestBookAttributes[] | undefined>;
+}
+
+export interface IRequestBookService {
+  getAllRequestBooks(): Promise<any>;
+  getRequestBookById(id: string): Promise<any>;
+  getRequestBookByUserId(user_id: string): Promise<any>;
+  createRequestBook(
+    user_id: string,
+    status_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<any>;
+  updateRequestBook(
+    id: string,
+    user_id: string,
+    status_id: string,
+    title: string,
+    desc: string,
+    cover_image: string
+  ): Promise<any>;
+  deleteRequestBook(id: string): Promise<any>;
 }

@@ -120,7 +120,6 @@ class BookQuizService implements IBookQuizService {
 
   async answerBookQuiz(id: string, user_answer: string) {
     try {
-      console.log(user_answer, "isi user_answer service");
       const bookQuiz = await this.bookQuizDao.answerBookQuiz(id, user_answer);
 
       if (!bookQuiz) {

@@ -19,6 +19,7 @@ class BookDao implements IBookDao {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
@@ -32,6 +33,7 @@ class BookDao implements IBookDao {
           book_code,
           category_id,
           agegroup_id,
+          user_id,
           title,
           desc,
           duration,
@@ -58,7 +60,7 @@ class BookDao implements IBookDao {
     sort?: number,
     agegroup_id?: string,
     category_id?: string
-  ): Promise<IBookAttributes[] | undefined> {
+  ): Promise<any> {
     const convertPage = Number(page) || 1;
     const convertLimit = Number(limit) || 25;
     const converSort = Number(sort) || 2;
@@ -75,19 +77,26 @@ class BookDao implements IBookDao {
         whereClause.agegroup_id = agegroup_id;
       }
 
-      const books = await this.db.book.findMany({
-        skip: (convertPage - 1) * convertLimit,
-        take: convertLimit,
-        orderBy: {
-          created_date: sortOptions,
-        },
-        where: whereClause,
-        include: {
-          category: true,
-          agegroup: true,
-        },
-      });
-      return books;
+      const [books, total] = await Promise.all([
+        this.db.book.findMany({
+          skip: (convertPage - 1) * convertLimit,
+          take: convertLimit,
+          orderBy: {
+            created_date: sortOptions,
+          },
+          where: whereClause,
+          include: {
+            category: true,
+            agegroup: true,
+            user: true,
+          },
+        }),
+        this.db.book.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return { books, total };
     } catch (error: any) {
       console.log(error, "Error retrieving all books");
       throw new StandardError({
@@ -103,6 +112,11 @@ class BookDao implements IBookDao {
       const book = await this.db.book.findUnique({
         where: {
           ID: id,
+        },
+        include: {
+          category: true,
+          agegroup: true,
+          user: true,
         },
       });
 
@@ -122,6 +136,7 @@ class BookDao implements IBookDao {
     title: string,
     category_id: string,
     agegroup_id: string,
+    user_id: string,
     desc: string,
     duration: string,
     audio_link: string,
@@ -140,6 +155,7 @@ class BookDao implements IBookDao {
           duration,
           audio_link,
           cover_image,
+          user_id,
         },
       });
 
@@ -225,6 +241,7 @@ class BookDao implements IBookDao {
         include: {
           category: true,
           agegroup: true,
+          user: true,
         },
       });
 
