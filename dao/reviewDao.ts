@@ -267,7 +267,7 @@ class ReviewDao implements IReviewDao {
       });
 
       const formattedBestStories = await Promise.all(
-        bestStories.map(async (review) => {
+        bestStories.map(async (review: any) => {
           const [book] = await Promise.all([
             this.db.book.findUnique({
               where: {
