@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DB_URL_DEV")
+  url      = env("DB_URL_PROD")
 }
 
 // User model
