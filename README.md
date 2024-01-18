@@ -24,6 +24,6 @@ This platform directly addresses challenges in education, such as limited access
 
 ## DEPLOYMENT ⚙️
 
-The project has been successfully deployed using AWS Lightsail. You can access the production version of the website by following this link: [https://api-admin.folklof.com](https://api-admin.folklof.com)
+The project has been successfully deployed using AWS Lightsail. You can access the production version of the website by following this link: [https://api.folklof.com](https://api.folklof.com)
 
 Feel free to explore the website and try out the different features. I appreciate any feedback and suggestions to further improve the user experience.
